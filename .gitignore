@@ -1,0 +1,11 @@
+# Python
+backend/venv/
+backend/.env
+*.pyc
+__pycache__/
+
+# Node
+frontend/tastebuds/node_modules/
+
+# Database
+backend/db.sqlite3

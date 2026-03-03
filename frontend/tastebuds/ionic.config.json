@@ -1,0 +1,7 @@
+{
+  "name": "tastebuds",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
