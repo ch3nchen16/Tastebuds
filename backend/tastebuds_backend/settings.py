@@ -15,6 +15,19 @@ load_dotenv()
 
 from pathlib import Path
 
+from datetime import timedelta # used to set how long the JWT token is valid for
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), # Set token lifetime to 60  mins
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), # Set refresh token lifetime to 30 days
+}
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +56,7 @@ INSTALLED_APPS = [
     # Third Party
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
     # Our apps
     'users',
 ]
