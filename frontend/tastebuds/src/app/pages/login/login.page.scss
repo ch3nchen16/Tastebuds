@@ -1,0 +1,103 @@
+.login-content{
+    --background: #ffffff /*white btw used --background because it is an Ionic CSS variable */
+}
+/* -- use it for ionic components like ion-content, ion-button, ion-input */
+.login-container{
+    display: flex; /*turns to flexbox*/
+    flex-direction: column; /* stacks vertically (logo on top then form then signup) */
+    justify-content: center; /* vertically centers */
+    min-height: 100vh; /*makes container at least 100% of screen height vh=viewport height (visible screen) */
+    padding: 24px 20px; /*24px top/bottom, 20px left/right */
+    margin: 0 auto; /*horizontally centers */
+    /*on mobile container takes up full wdith */
+    max-width: 100%;
+    /* Tablet */
+    @media (min-width: 768px) { //if screen is at least 768px wide (tablet)
+        max-width: 480px; //limit form to 480px wide
+    }
+    /* Desktop */
+    @media (min-width: 1024px) {
+        max-width: 400px;
+    }
+}
+
+.logo-container{
+    text-align: center;
+    margin-bottom: 40px;
+
+    .app-name{
+        color: #E8475F;
+        font-size: 42px;
+        font-weight: 700; /*bold*/
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 5px;
+
+        /*to make smaller on small phones */
+        @media (max-width: 360px) {
+            font-size: 34px;
+        }
+    }
+
+    .app-tagline{
+        color: #888; /*light grey */
+        font-size: 14px;
+    }
+}
+
+.form-container{
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /*add 16px space betw each input field*/
+
+    ion-input{
+        --border-radius: 8px; /*rounds corners of input fields*/
+        font-size: 15px; /* font size for input text*/
+    }
+
+    ion-button{
+        --background: #E8475F; /*tongue red*/
+        --border-radius: 8px;
+        --box-shadow: none; /*removes feault shadow*/
+        height: 48px;
+        font-weight: 600;
+        font-size: 16px;
+        margin-top: 8px; /*gap above btn*/
+    }
+
+    .forgot-pw{
+        text-align: center;
+        color: #E8475F;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 4px;
+    }
+}
+
+.error-message{
+    background: #ffe5e5;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+
+    p{
+        color: #d00;
+        font-size: 14px;
+        margin: 0; /*removes default paragraph margin*/
+    }
+}
+
+.register-link{
+    text-align: center;
+    margin-top: 32px;
+    border-top: 1px solid #eee; /*light grey line*/
+    padding-top: 20px;
+    color: #888;
+    font-size: 14px;
+
+    span{
+        color: #E8475F;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+}

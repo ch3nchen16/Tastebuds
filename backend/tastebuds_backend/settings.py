@@ -15,18 +15,19 @@ load_dotenv()
 
 from pathlib import Path
 
-from datetime import timedelta # used to set how long the JWT token is valid for
+from datetime import timedelta #used to set a time duration (we use for token lifetime)
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK = { #for every API endpoint use JWT to verify who user is
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication', #tells Django to use JWT instead of sessions (defualt)
     ),
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), # Set token lifetime to 60  mins
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), # Set refresh token lifetime to 30 days
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), #acces toeken lasts 60 mins
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), #refresh token lasts 30 days (if user doesn't use app for 30 days then they must log in again)
 }
+#note that the user is not logged out after 60 mins, it just expires and the backend sends a new access token, without the user noticing
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,7 +57,7 @@ INSTALLED_APPS = [
     # Third Party
     'rest_framework',
     'corsheaders',
-    'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.token_blacklist', #this is added to blacklist their refresh token afyer a user logs out so it can't be used again in case someone steals their refresh token
     # Our apps
     'users',
 ]
