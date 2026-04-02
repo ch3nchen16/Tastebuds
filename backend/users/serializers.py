@@ -6,18 +6,35 @@ class RegisterSerializer(serializers.ModelSerializer): #serializer for user regi
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'firebase_uid'] #fields required for registration
+        fields = ["username", "email", "password", "firebase_uid"] #fields required for registration
 
     def create(self, validated_data): #self is the instance of the serializer, validated_data is the data that has been validated by the serializer used to create the user
         user = User.objects.create_user( #create_user is a special method that automatically hashes the password, validates the password and saves the user to the database 
-            username=validated_data['username'], #the username is taken from the validated data and passed to the create_user method
-            email=validated_data['email'],
-            password=validated_data['password'],
-            firebase_uid=validated_data.get('firebase_uid', '')
+            username=validated_data["username"], #the username is taken from the validated data and passed to the create_user method
+            email=validated_data["email"],
+            password=validated_data["password"],
+            firebase_uid=validated_data.get("firebase_uid", "")
         )
         return user #the created user is returned 
 
 class UserProfileSerializer(serializers.ModelSerializer):#used to send user profile data back to frontend
+    
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+    posts_count = serializers.SerializerMethodField()
+    
     class Meta: #specifies the model and fields to be serialized
         model = User #tells which model the serializer is for = User model
-        fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'display_name', 'phone' ] #fields to send to frontend
+        fields = ["id", "username", "email", "bio", "profile_picture", "display_name", "phone", "followers_count", "following_count", "posts_count" ] #fields to send to frontend
+
+    # Calculates Followers count 
+    def get_followers_count(self, obj): #obj = User object being serialized
+        return obj.followers.count() if hasattr(obj, "followers") else 0 #obj.followers.count() counts how many followers the user has
+    #hasattr(obj, 'followers') check if the user has any followers, if not then return 0
+    
+    def get_following_count(self, obj):
+        return obj.following.count() if hasattr(obj, "following") else 0
+
+    def get_posts_count(self, obj):
+        return obj.posts.count() if hasattr(obj, "posts") else 0
+
