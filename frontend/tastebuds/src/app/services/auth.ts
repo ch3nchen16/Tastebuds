@@ -161,5 +161,9 @@ async resendVerificationEmail(email: string, password: string): Promise<void> {
     await sendPasswordResetEmail(auth, email);
   }
 
+  getCurrentUser(): any {
+    return this.currentUserSubject.getValue();
+  }
+
 }
 

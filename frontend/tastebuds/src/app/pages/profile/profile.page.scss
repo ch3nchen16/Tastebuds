@@ -1,0 +1,284 @@
+.profile-content{
+    --background: #ffffff;
+}
+
+ion-toolbar {
+    ion-button{
+        --color: #E8475F;    
+    }
+}
+
+.profile-header{
+    padding: 16px;
+    max-width: 100%;
+
+    /* Tablet Screens */
+    @media (min-width: 768px) {/* apply these on screens 768px or wider */
+        max-width: 600px;
+        margin: 0 auto; /* centers horizontally */
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        max-width: 700px;
+        margin: 0 auto  ; 
+    }
+}
+
+.profile-row{
+    display: flex; /* makes pfp and counts side by side*/
+    align-items: center;
+    gap: 24px; /* gap betw pfp and the counts*/
+    margin-bottom: 12px;
+
+    /*tablet*/
+    @media (min-width: 768px) {
+        gap: 40px;
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        gap: 48px;
+    }
+}
+
+/* Profile Picture */
+.pfp-container{
+    flex-shrink: 0; /*prevents pfp from shrinking when screen is small*/
+
+    .profile-img{
+        width:80px;
+        height: 80px;
+        border-radius: 50%; /* makes pfp circle*/
+        object-fit: cover; /* ensures image fils circle w/o stretching*/
+        border: 2px solid #E8475F; /*red border arounf pfp*/
+
+        /*tablet*/
+        @media (min-width: 768px) {
+            width: 120px;
+            height: 120px;
+        }
+
+        /*desktop*/
+        @media (min-width: 1024px) {
+            width: 150px;
+            height: 150px;
+        }
+    }
+
+    .pfp-placeholder{
+        width:80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid #E8475F;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @media (min-width: 768px) {
+            width: 120px;
+            height: 120px
+        }
+
+        @media (min-width: 1024px) {
+            width: 150px;
+            height: 150px;
+        }
+
+        .default-avatar{
+            font-size: 72px;
+            color: #E8475F;
+
+            @media (min-width: 768px) {
+                font-size: 110px;
+            }
+
+
+            @media (min-width: 1024px) {
+                font-size: 140px;
+            }
+        }
+    }
+}
+
+/* Follower, post counts*/
+.counts-container{
+    display: flex; /*puts counts side by side*/
+    flex: 1; /*takes up all remaining space after pfp*/
+    justify-content: space-around; /*equally soaces the counts w/ equal space around them*/
+
+    .count-item{
+        display: flex;
+        flex-direction: column; /*stack no. above label*/
+        align-items: center;
+        cursor: pointer;
+
+        .count-number{
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+
+            @media (min-width: 768px) {
+                font-size: 20px;
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 22px;
+            }
+        }
+
+        .count-label{
+            font-size: 12px;
+            color: #888;
+
+                @media (min-width: 768px) {
+                    font-size: 14px;
+                }
+
+                @media (min-width: 1024px) {
+                    font-size: 15px;
+                }
+        }
+
+    }
+}
+
+/* Bio */
+.bio-container{
+    margin-bottom: 12px;
+
+    .display-name{
+        font-size: 14px;
+        font-weight: 700;
+        color: #000;
+        margin: 0 0 4px; /*removes top/side margin and adds 4px gap below*/
+
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
+    }
+
+    .bio{
+        font-size: 14px;
+        color: #333;
+        margin: 0;
+        line-height: 1.4; /*adds spacing betw lines*/
+
+        @media (min-width: 768px) {
+            font-size: 15px;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 16px;
+        }
+    }
+}
+
+/* Action Buttons */
+.action-btns{
+    margin-bottom: 12px;
+
+    .edit-btn{
+        --border-color: #dbdbdb;
+        --color: #000;
+        --border-radius: 8px;
+        height: 32px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .follow-btn{
+        --background: #E8475F;
+        --border-radius: 8px;
+        height: 32px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+/* Posts Tab */
+.posts-tabs{
+    display: flex;
+    border-top: 0.5px solid #dbdbdb;
+    border-bottom: 0.5px solid #dbdbdb;
+    margin: 0 -16px; /*negative pulls tabs to full screen width cancelling out 16px padding from .profile-header*/
+
+    .tab-item{
+        flex: 1; /*each tab takes up equal width*/
+        text-align: center;
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #888;
+        cursor: pointer;
+
+        @media (min-width: 768px) {
+            font-size: 15px;
+            padding: 12px 0;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 16px;
+            padding: 14px 0;
+        }
+
+        /*when tab is clicked turn it red*/
+        &.active{ /*& refers to .tab-item = .tab-item.active*/
+            color: #E8475F;
+            border-bottom: 2px solid #E8475F;
+        }
+    }
+}
+
+/* Posts Grid */
+.posts-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #dbdbdb;
+
+    // Mobile — 3 columns
+    grid-template-columns: repeat(3, 1fr); /*3 equal columns, 1fr = 1/3*/
+
+    // Tablet - 3 bigger columns 
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    // Desktop - 3 centered columns
+    @media (min-width: 1024px) {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .post-item{
+        aspect-ratio: 1; /*each grid item becomes a square regardless of screen size*/
+        overflow: hidden; /*clips image so it doesnt overflow outside of the square*/
+
+        .post-thumbnail{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+/* No Posts */
+.no-posts{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #888;
+    text-align: center;
+
+    p{
+        font-size: 14px;
+    }
+}

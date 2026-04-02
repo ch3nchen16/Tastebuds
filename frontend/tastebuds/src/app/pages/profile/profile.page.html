@@ -1,13 +1,140 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>profile</ion-title>
+    <ion-title>{{username}}</ion-title>
+    <ion-buttons slot="end" *ngIf="isOwnProfile">
+      <!-- Logout Button -->
+      <ion-button (click)="onLogout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Settings Button -->
+      <ion-button (click)="onSettings()">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="profile-content">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <!-- Profile Picture + Follower Count Row -->
+    <div class="profile-row">
+      <!-- Profile Picture-->
+      <div class="pfp-container">
+        <!-- user? if user % pfp exists, display pfp-->
+        <img
+          *ngIf="user?.profile_picture"
+          [src]="user.profile_picture"
+          class="profile-img"
+        />
+        <!-- If user doesn't have a profile picture -->
+        <div *ngIf="!user?.profile_picture" class="pfp-placeholder">
+          <!-- Display default avatar -->
+          <ion-icon
+            name="person-circle-outline"
+            class="default-avatar"
+          ></ion-icon>
+        </div>
+      </div>
+
+      <!-- Counts -->
+      <div class="counts-container">
+        <!-- Followers Count-->
+        <div class="count-item" (click)="onViewFollowers()">
+          <span class="count-number">{{user?.followers_count || 0}}</span>
+          <span class="count-label">Followers</span>
+        </div>
+
+        <!-- Following Count-->
+        <div class="count-item" (click)="onViewFollowing()">
+          <span class="count-number">{{user?.following_count || 0}}</span>
+          <span class="count-label">Following</span>
+        </div>
+
+        <!-- Posts Count-->
+        <div class="count-item">
+          <span class="count-number">{{user?.posts_count || 0}}</span>
+          <span class="count-label">Posts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Display Name + Bio -->
+    <div class="bio-container">
+      <!-- If user added a display name then show it otherwise display username instead-->
+      <p class="display-name">{{user?.display_name || user?.username}}</p>
+      <!-- If user added a bio show it otherwise nothing -->
+      <p class="bio" *ngIf="user?.bio">{{user?.bio}}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-btns">
+      <!-- If it's your own profile -->
+      <ng-container *ngIf="isOwnProfile">
+        <!-- only show edit btn if it's your own profile -->
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="edit-btn"
+          (click)="onEditProfile()"
+        >
+          Edit Profile
+        </ion-button>
+      </ng-container>
+
+      <!-- If it's someone else's profile -->
+      <ng-container *ngIf="!isOwnProfile">
+        <!-- only shows follow btn if it's not your own profile -->
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="follow-btn"
+          (click)="onToggleFollow()"
+        >
+          {{isFollowing ? 'Unfollow' : 'Follow'}}
+          <!-- Follow/Unfollow button -->
+        </ion-button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Posts Tabs -->
+  <div class="posts-tabs">
+    <!-- Tab for all posts, only recipes and only reviews-->
+    <div
+      class="tab-item"
+      [class.active]="activeTab === 'all'"
+      (click)="setTab('all')"
+    >
+      Posts
+    </div>
+    <div
+      class="tab-item"
+      [class.active]="activeTab === 'reviews'"
+      (click)="setTab('reviews')"
+    >
+      Reviews
+    </div>
+    <div
+      class="tab-item"
+      [class.active]="activeTab === 'recipes'"
+      (click)="setTab('recipes')"
+    >
+      Recipes
+    </div>
+  </div>
+
+  <!-- Posts Grid -->
+  <div class="posts-grid" *ngIf="posts.length > 0">
+    <!-- Only show grid if there are posts-->
+    <div class="post-item" *ngFor="let post of filteredPosts">
+      <img [src]="post.thumbnail" class="post-thumbnail" />
+    </div>
+  </div>
+
+  <!-- If No Posts -->
+  <div class="no-posts" *ngIf="posts.length === 0">
+    <p>No posts yet</p>
+  </div>
 </ion-content>

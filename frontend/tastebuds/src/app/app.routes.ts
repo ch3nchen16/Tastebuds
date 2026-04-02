@@ -7,7 +7,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'login',
     pathMatch: 'full',
   },
   {
@@ -25,5 +25,9 @@ export const routes: Routes = [
   {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile.page').then( m => m.ProfilePage)
+  },
+  {
+    path: 'profile/:username',  // ← add this for viewing other users' profiles
+    loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
   },
 ];
