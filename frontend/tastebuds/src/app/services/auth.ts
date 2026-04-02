@@ -9,6 +9,7 @@ import {
   UserCredential                    // type for Firebase user credential
 } from 'firebase/auth'; //importing functions from Firebase Authentication to handle user auth with Firebase
 import { auth } from './firebase.config'; //importing the auth object we set up in firebase.config.ts to use Firebase Authentication in this service
+import { sendPasswordResetEmail } from 'firebase/auth'; //importing password resetfunction
 
 @Injectable({ 
   providedIn: 'root', //create one instance of this service for the whole app so every component uses the same AuthService and has access to the same user data and login state
@@ -143,4 +144,22 @@ async resendVerificationEmail(email: string, password: string): Promise<void> {
   getEmailByUsername(username: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/get-email/${username}/`);
   }
+
+  // FORGOT PASSWORD
+  async forgotPassword(usernameOrEmail: string): Promise<void> {
+    let email = usernameOrEmail;
+
+    //if username was entered, get email from Django first
+    if (!usernameOrEmail.includes('@')) {
+      const userResponse: any = await lastValueFrom(
+        this.http.get(`${this.apiUrl}/get-email/${usernameOrEmail}/`)
+      );
+      email = userResponse.email;
+    }
+
+    //Send password reset email via Firebase
+    await sendPasswordResetEmail(auth, email);
+  }
+
 }
+
