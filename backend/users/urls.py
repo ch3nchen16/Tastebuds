@@ -7,6 +7,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('me/', views.me, name='me'),
+    path('get-email/<str:username>/', views.get_email, name='get_email'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile/<str:username>/', views.get_profile, name='get_profile'),
 ]

@@ -1,13 +1,63 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>register</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="register-content">
+  <div class="register-container">
+    <!-- Logo -->
+    <div class="logo-container">
+      <h1 class="app-name">TasteBuds</h1>
+      <p class="app-tagline">Trust Your Taste Buds</p>
+    </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">register</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- Register Form -->
+    <div class="form-container">
+      <!-- Username -->
+      <ion-input
+        label="Username"
+        fill="outline"
+        labelPlacement="floating"
+        type="text"
+        [(ngModel)]="username"
+      ></ion-input>
+
+      <!-- Email -->
+      <ion-input
+        label="Email"
+        fill="outline"
+        labelPlacement="floating"
+        type="email"
+        [(ngModel)]="email"
+      ></ion-input>
+
+      <!-- Password -->
+      <ion-input
+        label="Password"
+        fill="outline"
+        labelPlacement="floating"
+        type="password"
+        [(ngModel)]="password"
+      ></ion-input>
+
+      <!-- Confirm Password-->
+      <ion-input
+        label="Confirm Password"
+        fill="outline"
+        labelPlacement="floating"
+        type="password"
+        [(ngModel)]="confirmPassword"
+      ></ion-input>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <!-- Register Button -->
+      <ion-button expand="block" (click)="onRegister()" [disabled]="isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading">Create Account</span>
+      </ion-button>
+    </div>
+
+    <div class="login-link">
+      <p>Already have an account? <span routerLink="/login">Log in</span></p>
+    </div>
+  </div>
 </ion-content>

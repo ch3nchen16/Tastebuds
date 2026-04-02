@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'; //enables *ngIf
 import { FormsModule } from '@angular/forms'; //enables [(ngModel)]
 import { IonContent, IonInput, IonSpinner, IonButton} from '@ionic/angular/standalone';
 import { AuthService} from '../../services/auth'; //import auth service to use login method that talks to Django
-import { RouterModule, Router } from '@angular/router'; //import router to go to other pages after login
+import { RouterModule, Router, ActivatedRoute } from '@angular/router'; //import router to go to other pages after login
 
 @Component({
   selector: 'app-login',  
@@ -18,12 +18,20 @@ export class LoginPage {
   username = "";
   password = "";
   isLoading = false; //for showing loading spinner when user clicks btn
-  errorMessage = ""; 
+  errorMessage = "";
+  successMessage = ""; //for showing success message when user is redirected from register page
 
   //constructor injects these services so we can call login() & navigate
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {
+    // Check if user just registered and needs to verify email
+    this.route.queryParams.subscribe(params => {
+      if (params['message']) {
+        this.successMessage = params['message'];
+      }
+    });
+  }
 
-  onLogin() {
+  async onLogin() {
     //if username or password is empty 
     if (!this.username || !this.password) {
       this.errorMessage = "Please enter all fields";
@@ -32,17 +40,22 @@ export class LoginPage {
 
     this.isLoading = true; //once true: spinner appears and btn disabled
     this.errorMessage = ""; //clears error msg
-    //calls authService.login() & subscribes to the result 
-    this.authService.login(this.username, this.password).subscribe({
-      next: () => { //runs when Django responds successfully
-        this.isLoading = false; //stop loading
-        this.router.navigate(["/home"]); //navigate to home
-      },
-      error: (err) => { //runs when unsuccessful
-        this.isLoading = false; //stop loading & show error msg
-        this.errorMessage = err.error?.error || "Login failed. Please try again";
-      }
-    });
-  }
 
+    try {
+      await this.authService.login(this.username, this.password);
+      this.isLoading = false;
+      this.router.navigate(['/home']);
+    } catch (err: any) {
+      this.isLoading = false;
+      if (err.message === 'Please verify your email before logging in') {
+        this.errorMessage = 'Please verify your email before logging in';
+      } else if (err.code === 'auth/invalid-credential') {
+        this.errorMessage = 'Invalid username or password';
+      } else if (err.code === 'auth/too-many-requests') {
+        this.errorMessage = 'Too many attempts. Please try again later';
+      } else {
+        this.errorMessage = err.message || 'Login failed. Please try again.';
+      }
+    }
+  }
 }

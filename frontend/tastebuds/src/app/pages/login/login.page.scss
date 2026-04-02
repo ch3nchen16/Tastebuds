@@ -101,3 +101,17 @@
     }
 
 }
+
+.success-message{
+  background: #e5ffe5;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 16px;
+
+  p{
+    color: #008000;
+    font-size: 14px;
+    margin: 0;
+  }
+}

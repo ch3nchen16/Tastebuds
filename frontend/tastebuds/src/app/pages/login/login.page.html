@@ -6,11 +6,16 @@
       <p class="app-tagline">Trust Your Taste Buds</p>
     </div>
 
+    <!-- Success message (shown after registration) -->
+    <div *ngIf="successMessage" class="success-message">
+      <p>{{ successMessage }}</p>
+    </div>
+
     <!-- Login Form -->
     <div class="form-container">
-      <!-- Username -->
+      <!-- Username Or Email -->
       <ion-input
-        label="Username"
+        label="Username or Email"
         fill="outline"
         labelPlacement="floating"
         type="text"

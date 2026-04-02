@@ -6,13 +6,14 @@ class RegisterSerializer(serializers.ModelSerializer): #serializer for user regi
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'firebase_uid'] #fields required for registration
 
     def create(self, validated_data): #self is the instance of the serializer, validated_data is the data that has been validated by the serializer used to create the user
         user = User.objects.create_user( #create_user is a special method that automatically hashes the password, validates the password and saves the user to the database 
             username=validated_data['username'], #the username is taken from the validated data and passed to the create_user method
             email=validated_data['email'],
             password=validated_data['password'],
+            firebase_uid=validated_data.get('firebase_uid', '')
         )
         return user #the created user is returned 
 

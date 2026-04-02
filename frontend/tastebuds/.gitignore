@@ -68,3 +68,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase (hide api key)
+frontend/tastebuds/src/app/services/firebase.config.ts

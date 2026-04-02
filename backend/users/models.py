@@ -7,6 +7,7 @@ class User(AbstractUser):
     display_name = models.CharField(max_length=50, blank=True, null=True)
     profile_picture = models.URLField(max_length=500, blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
+    firebase_uid = models.CharField(max_length=255, unique=True, blank=True, null=True) #stores the Firebase UID for authentication
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): #returns a string representation of the user, which is the username

@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core'; //marks this class as a service that can be injected into other components (reusable)
 import { HttpClient } from '@angular/common/http'; //built in tool for making HTTP requests to our Django API
-import { Observable , BehaviorSubject } from 'rxjs'; // stream of future data, a stpecial type of observable that holds a current value and broadcasts it to anyone listening
-import { tap } from 'rxjs/operators'; //operator that lets you peek at the response without changing data
+import { BehaviorSubject, lastValueFrom } from 'rxjs'; // stream of future data, a stpecial type of observable that holds a current value and broadcasts it to anyone listening
+import { 
+  createUserWithEmailAndPassword,  // creates user in Firebase
+  signInWithEmailAndPassword,       // signs in user with Firebase
+  signOut,                          // signs out user from Firebase
+  sendEmailVerification,            // sends verification email
+  UserCredential                    // type for Firebase user credential
+} from 'firebase/auth'; //importing functions from Firebase Authentication to handle user auth with Firebase
+import { auth } from './firebase.config'; //importing the auth object we set up in firebase.config.ts to use Firebase Authentication in this service
 
 @Injectable({ 
   providedIn: 'root', //create one instance of this service for the whole app so every component uses the same AuthService and has access to the same user data and login state
@@ -20,28 +27,86 @@ export class AuthService {
     }
   } 
 
-  //Register Method
-  register(username: string, email: string, password: string): Observable<any> { //expects username, email, pw and returns an observable becuase HTTP request is asynchronous and when the server responds leter it willl send the data
-    return this.http.post(`${this.apiUrl}/register/`, { username, email, password }); //sends PSOT request to backend. (POST because it creates a new user)
-  } //apiURL (register endpoint) = http://127.0.0.1:8000/api/users/register/
-  //sends user's registration data to backend so a new account can be made.
+  // REGISTER
+  async register(
+    username: string, 
+    email: string, 
+    password: string,
+  ): Promise<any> { //expects username, email, pw and returns an observable becuase HTTP request is asynchronous and when the server responds leter it willl send the data
+    
+  // 1. Create user in Firebase Authentication w/ email and pw
+  const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const firebaseUser = userCredential.user; //get the created user from the credential
 
-  //Login Method
-  //this method is called by login form and triggers login request
-  login(username: string, password: string): Observable<any> { //angukar sens POST request to Django. Ex {"username": "chen", "password: "password123"} to login endpoint (apiURL)
-    return this.http.post(`${this.apiUrl}/login/`, { username, password }).pipe( //inside pipe you can run operators (we use tap())
-      tap((response: any) => { //tap lets us look at the response and perform side effects wihtout changing the original response before it reaches the components
-        //these are the side effects when a user logs in successfully
-        localStorage.setItem('access_token', response.access); //saves tokens to local storage
-        localStorage.setItem('refresh_token', response.refresh); //saves user data
-        localStorage.setItem('user', JSON.stringify(response.user)); //updates behavior subject with logged in user's data so the whole app knows someone logged in, JSON.stringify turns user object into a string to save in local storage
-        this.currentUserSubject.next(response.user);  //updates so the whole app knows someone logged in
+  // 2. Send verification email to user 
+  await sendEmailVerification(firebaseUser); //sends verification email to the user's email address
+
+  // 3. get Firebase ID token to prove to Django this is real firebase user
+  const idToken = await firebaseUser.getIdToken();
+
+  // 4. Save user to Django w/ firebase_uid to link accounts
+  const response: any = await lastValueFrom(
+    this.http.post(`${this.apiUrl}/register/`, {
+      username,
+      email,
+      password,
+      firebase_uid: firebaseUser.uid 
+    }, {
+      headers: { Authorization: `Bearer ${idToken}` } 
+    }) //sends POST request to Django to create user in Django database, includes Firebase UID to link accounts, includes ID token in headers for authentication
+  );
+
+  return response; //returns the response from Django (could be user data or success message)
+}
+
+// LOGIN
+  async login(usernameOrEmail: string, password: string): Promise<any> { 
+
+    let email = usernameOrEmail; //assume input is email
+
+    //1. Check if input is username (if it doesnt contain an @)
+    if (!usernameOrEmail.includes('@')) {
+      //2. get email from Django using username (the app uses username for login but our Firebase auth uses email)
+      const userResponse: any = await lastValueFrom(
+        this.http.get(`${this.apiUrl}/get-email/${usernameOrEmail}/`) //sends GET request to Django to get user data based on username, expects response to include user's email{
+      );
+
+      email = userResponse.email;
+    }
+    
+  
+    // 3. sign in with firebase using email and pw
+    const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+    const firebaseUser = userCredential.user;
+
+    // 4. Block login if email not verified
+    if (!firebaseUser.emailVerified) {
+      await signOut(auth);
+      throw new Error("Please verify your email before logging in");
+    }
+
+    //5. get firebase token
+    const firebaseToken = await firebaseUser.getIdToken();
+
+    // 6. send firebase token to Django to get JWT
+    const response: any = await lastValueFrom(
+      this.http.post(`${this.apiUrl}/login/`, {
+        firebase_token: firebaseToken
       })
     );
+
+    // 7. Save JWT and user data in local storage and update behavior subject
+    localStorage.setItem('access_token', response.access); //save JWT access token in local storage
+    localStorage.setItem('refresh_token', response.refresh);
+    localStorage.setItem('user', JSON.stringify(response.user)); //save user data in local storage, stringify turns object into string to save
+    this.currentUserSubject.next(response.user); //update BehaviorSubject with logged in user's data so the whole app knows who is logged in
+
+    return response; //return response from Django (could be user data or success message)
   }
 
-  //Logout Method
-  logout(): void {
+  // LOGOUT
+  async logout(): Promise<void> {
+    await signOut(auth); //signs out user from Firebase Authentication
     localStorage.removeItem('access_token'); //removes everything from local storage
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user'); //removes saved user
