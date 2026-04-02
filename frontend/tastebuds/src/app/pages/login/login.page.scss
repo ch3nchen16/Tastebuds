@@ -115,3 +115,13 @@
     margin: 0;
   }
 }
+
+.resend-container{
+  margin-top: 8px;
+
+  ion-button {
+    --color: #E8475F;
+    --border-color: #E8475F;
+    --background: transparent;
+  }
+}

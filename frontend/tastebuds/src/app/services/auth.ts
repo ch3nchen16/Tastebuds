@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'; //marks this class as a service that can be injected into other components (reusable)
 import { HttpClient } from '@angular/common/http'; //built in tool for making HTTP requests to our Django API
-import { BehaviorSubject, lastValueFrom } from 'rxjs'; // stream of future data, a stpecial type of observable that holds a current value and broadcasts it to anyone listening
+import { BehaviorSubject, lastValueFrom, Observable } from 'rxjs'; // stream of future data, a stpecial type of observable that holds a current value and broadcasts it to anyone listening
 import { 
   createUserWithEmailAndPassword,  // creates user in Firebase
   signInWithEmailAndPassword,       // signs in user with Firebase
@@ -45,18 +45,35 @@ export class AuthService {
   const idToken = await firebaseUser.getIdToken();
 
   // 4. Save user to Django w/ firebase_uid to link accounts
-  const response: any = await lastValueFrom(
-    this.http.post(`${this.apiUrl}/register/`, {
-      username,
-      email,
-      password,
-      firebase_uid: firebaseUser.uid 
-    }, {
-      headers: { Authorization: `Bearer ${idToken}` } 
-    }) //sends POST request to Django to create user in Django database, includes Firebase UID to link accounts, includes ID token in headers for authentication
-  );
+  try {
+    const response: any = await lastValueFrom(
+      this.http.post(`${this.apiUrl}/register/`, {
+        username,
+        email,
+        password,
+        firebase_uid: firebaseUser.uid 
+      }) //sends POST request to Django to create user in Django database, includes Firebase UID to link accounts, includes ID token in headers for authentication
+    );
 
-  return response; //returns the response from Django (could be user data or success message)
+    return response; //returns the response from Django (could be user data or success message)
+  } catch (djangoError) {
+    //if Django fails, delete Firebase user
+    await firebaseUser.delete();
+    throw djangoError;
+  }
+}
+
+// Resend verification email
+async resendVerificationEmail(email: string, password: string): Promise<void> {
+  // Sign in temporarily to get the Firebase user
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const firebaseUser = userCredential.user;
+  
+  // Send new verification email
+  await sendEmailVerification(firebaseUser);
+  
+  // Sign out again since email isn't verified yet
+  await signOut(auth);
 }
 
 // LOGIN
@@ -121,4 +138,9 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken(); //return a string if token exists, if false (no token) then return null. 
   } //!! turns any value into boolean
+
+  //for resending verification email
+  getEmailByUsername(username: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/get-email/${username}/`);
+  }
 }

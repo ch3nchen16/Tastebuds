@@ -57,6 +57,8 @@ export class RegisterPage {
         this.errorMessage = 'Password is too weak — must be at least 6 characters';
       } else if (err.code === 'auth/invalid-email') {
         this.errorMessage = 'Invalid email address';
+      } else if (err.error?.username) {
+        this.errorMessage = 'This username is already taken';
       } else {
         this.errorMessage = err.message || 'Registration failed. Please try again.';
       }

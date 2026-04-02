@@ -41,6 +41,17 @@
         <!-- {{ }} = interpolation, displays value of a TS variable -->
       </div>
 
+      <!-- Resend verification email button -->
+      <div *ngIf="showResendButton" class="resend-container">
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="onResendVerification()"
+        >
+          Resend Verification Email
+        </ion-button>
+      </div>
+
       <!-- Login Button -->
       <ion-button expand="block" (click)="onLogin()" [disabled]="isLoading">
         <!-- (clcik="onLogin()" calls onLogin in .ts ) & [disabled]="isLoading" greys out + locks btn while waiting for Django -->
