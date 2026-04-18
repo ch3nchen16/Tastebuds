@@ -40,3 +40,15 @@
 * {
   font-family: 'Poppins', sans-serif;
 }
+
+/* So that input fields can be seen on mobile phones*/
+ion-input {
+  --color: #000000 !important;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  --placeholder-color: #888888 !important;
+}
+
+ion-content {
+  --background: #ffffff !important;
+}

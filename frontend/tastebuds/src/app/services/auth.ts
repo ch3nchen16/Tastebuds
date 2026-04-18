@@ -10,12 +10,13 @@ import {
 } from 'firebase/auth'; //importing functions from Firebase Authentication to handle user auth with Firebase
 import { auth } from './firebase.config'; //importing the auth object we set up in firebase.config.ts to use Firebase Authentication in this service
 import { sendPasswordResetEmail } from 'firebase/auth'; //importing password resetfunction
+import { environment } from '../../environments/environment'; //to get API URL from environment file
 
 @Injectable({ 
   providedIn: 'root', //create one instance of this service for the whole app so every component uses the same AuthService and has access to the same user data and login state
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/api/users'; //base URL for backend, every request uses this
+  private apiUrl = environment.apiUrl; //base URL for backend, every request uses this
   private currentUserSubject = new BehaviorSubject<any>(null); //creates a BehaviorSubject that holds logged in user's data, starts as null bcz noone logged in yet
   currentUser$ = this.currentUserSubject.asObservable(); //turna behavior subject into an observable so other components can subscribe to it and get updates when user logs in or out
   //currentUserSubject is private so only this service can change it, but currentUser$ is public so other components can listen to it and react to changes

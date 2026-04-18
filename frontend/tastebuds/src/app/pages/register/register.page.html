@@ -10,36 +10,32 @@
     <div class="form-container">
       <!-- Username -->
       <ion-input
-        label="Username"
+        placeholder="Username"
         fill="outline"
-        labelPlacement="floating"
         type="text"
         [(ngModel)]="username"
       ></ion-input>
 
       <!-- Email -->
       <ion-input
-        label="Email"
+        placeholder="Email"
         fill="outline"
-        labelPlacement="floating"
         type="email"
         [(ngModel)]="email"
       ></ion-input>
 
       <!-- Password -->
       <ion-input
-        label="Password"
+        placeholder="Password"
         fill="outline"
-        labelPlacement="floating"
         type="password"
         [(ngModel)]="password"
       ></ion-input>
 
       <!-- Confirm Password-->
       <ion-input
-        label="Confirm Password"
+        placeholder="Confirm Password"
         fill="outline"
-        labelPlacement="floating"
         type="password"
         [(ngModel)]="confirmPassword"
       ></ion-input>
@@ -52,7 +48,7 @@
       <!-- Register Button -->
       <ion-button expand="block" (click)="onRegister()" [disabled]="isLoading">
         <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="!isLoading">CREATE ACCOUNT</span>
       </ion-button>
     </div>
 

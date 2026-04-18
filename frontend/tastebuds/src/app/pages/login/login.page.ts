@@ -48,7 +48,7 @@ export class LoginPage {
       this.isLoading = false;
       this.username = "";
       this.password = "";
-      this.router.navigate(["/profile"]); //goes to profile page
+      this.router.navigate(["/tabs/profile"]); //goes to profile page
     } catch (err: any) {
       this.isLoading = false;
       if (err.message === "Please verify your email before logging in") {

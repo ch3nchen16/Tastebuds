@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onCancel()">
+        <span class="cancel-btn">Cancel</span>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Edit Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="edit-profile-content">
+  <div class="edit-profile-container">
+    <!-- Profile Picture -->
+    <div class="pfp-section">
+      <div class="pfp-container" (click)="onChangePicture()">
+        <!-- Show pfp if exists -->
+        <img
+          *ngIf="profilePicture"
+          [src]="profilePicture"
+          class="profile-img"
+        />
+
+        <!-- If no pfp display default avatar -->
+        <div *ngIf="!profilePicture" class="pfp-placeholder">
+          <ion-icon
+            name="person-circle-outline"
+            class="default-avatar"
+          ></ion-icon>
+        </div>
+
+        <!-- Show spinner while uploading -->
+        <div *ngIf="isUploadingPhoto" class="pfp-placeholder">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+
+        <!-- Camera Icon -->
+        <div class="camera-overlay">
+          <!-- tiny cam icon on pfp -->
+          <ion-icon name="camera-outline" class="camera-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Action Sheet for Photo Selection -->
+      <ion-action-sheet
+        [isOpen]="showActionSheet"
+        [buttons]="actionSheetButtons"
+        (didDismiss)="showActionSheet = false"
+      ></ion-action-sheet>
+
+      <p class="change-photo-text" (click)="onChangePicture()">
+        Change Profile Picture
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div class="form-container">
+      <!-- Display Name -->
+      <ion-input
+        fill="outline"
+        type="text"
+        [(ngModel)]="displayName"
+        placeholder="Display name"
+      ></ion-input>
+
+      <!-- Username (Read-only)-->
+      <ion-input
+        fill="outline"
+        type="text"
+        [(ngModel)]="username"
+        readonly
+        class="readonly-input"
+      ></ion-input>
+
+      <!-- Bio -->
+
+      <ion-textarea
+        fill="outline"
+        [(ngModel)]="bio"
+        placeholder="Add a bio"
+        [maxlength]="150"
+        rows="3"
+      ></ion-textarea>
+      <!-- Character Count for bio-->
+      <p class="char-count" slot="end">{{bio.length}}/150</p>
+
+      <!-- Phone -->
+
+      <ion-input
+        fill="outline"
+        type="tel"
+        [(ngModel)]="phone"
+        placeholder="Phone number (Optional)"
+      ></ion-input>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      <p>{{errorMessage}}</p>
+    </div>
+
+    <!-- Save Button -->
+    <div class="save-btn-container">
+      <ion-button expand="block" (click)="onSave()" [disabled]="isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading">Save Changes</span>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- For browser so we can pick a file from the laptop -->
+  <input
+    type="file"
+    accept="image/*"
+    #fileInput
+    style="display: none"
+    (change)="onFileSelected($event)"
+  />
+</ion-content>

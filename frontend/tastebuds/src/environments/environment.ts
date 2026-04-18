@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'http://192.168.1.34:8000/api/users' //for testing on my phone we use laptop's IP address so my phone can access the backend running on my laptop
+  //This will be replaced with the actual backend URL when we build the app for production and replace environment.ts with environment.prod.ts which has the production API URL
 };
 
 /*

@@ -8,6 +8,7 @@ import { addIcons } from 'ionicons';
 import { logOutOutline, settingsOutline, personCircleOutline } from 'ionicons/icons';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment'; //to get API URL from environment file
 
 @Component({
   selector: 'app-profile',
@@ -25,7 +26,7 @@ export class ProfilePage implements OnInit {
   activeTab = "all"; // all/revies/recipes
   posts: any[] = []; //list of posts to display based on active tab
 
-  private apiUrl = "http://127.0.0.1:8000/api/users";
+  private apiUrl = environment.apiUrl; //base URL for backend API, used in all API calls in this component
 
   constructor(
     private route: ActivatedRoute, //to get username from URL
@@ -42,6 +43,7 @@ export class ProfilePage implements OnInit {
     this.route.params.subscribe(async params => {
       const currentUser = this.authService.getCurrentUser();
       this.username = params["username"] || currentUser?.username;
+
       await this.loadProfile();
     });
   }
@@ -56,7 +58,10 @@ export class ProfilePage implements OnInit {
 
       //Check if this is the logged in user's profile
       const currentUser = this.authService.getCurrentUser();
-      this.isOwnProfile = currentUser?.username === this.username;
+      const currentUsername = currentUser?.username?.trim().toLowerCase();
+      const profileUsername = this.username?.trim().toLowerCase();
+
+      this.isOwnProfile = currentUsername === profileUsername;
 
     } catch (err) {
       console.error("Failed to load profile", err)

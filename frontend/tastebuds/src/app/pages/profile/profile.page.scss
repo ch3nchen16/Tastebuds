@@ -184,7 +184,8 @@ ion-toolbar {
 
     .edit-btn{
         --border-color: #dbdbdb;
-        --color: #000;
+         --background: #E8475F;
+        --color: #ffffff;
         --border-radius: 8px;
         height: 32px;
         font-size: 14px;
@@ -194,6 +195,8 @@ ion-toolbar {
     .follow-btn{
         --background: #E8475F;
         --border-radius: 8px;
+        --color: #ffffff;
+        --border-color: #E8475F;
         height: 32px;
         font-size: 14px;
         font-weight: 600;

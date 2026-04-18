@@ -1,0 +1,285 @@
+.edit-profile-content{
+  --background: #ffffff;
+}
+
+.edit-profile-container{
+  max-width: 100%;
+  padding-bottom: 24px;
+
+  /* Tablet */
+  @media (min-width: 768px){
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+/* Cancel btn*/
+ion-toolbar{
+  .cancel-btn{
+    color: #E8475F;
+    font-size: 14px;
+    font-weight: 600;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 17px;
+    }
+  }
+
+}
+
+/* Profile Picture */
+.pfp-section{
+  display: flex;
+  flex-direction: column; /* puts pfp above text*/
+  align-items: center;
+  padding: 24px 16px 16px; /* 24px top, 16px sides, 16px bottom */
+
+  @media (min-width: 768px) {
+    padding: 32px 16px 20px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 36px 16px 24px;
+  }
+
+  /* Clickable pfp */
+  .pfp-container{
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 12px;
+
+    /* pfp image */
+    .profile-img{
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #E8475F;
+
+      @media (min-width: 768px) {
+        width: 120px; 
+        height: 120px;
+      }
+
+      @media (min-width: 1024px) {
+        width: 150px; 
+        height: 150px;
+      }
+    }
+
+    /* Display default avatar if no pfp  */
+    .pfp-placeholder{
+      width: 90px;
+      height: 90px;
+      border-radius: 50%; /* circle */
+      border: 2px solid #E8475F;
+      display: flex;
+      align-items: center; /* centres vertically*/
+      justify-content: center;  /* centres horizontally */
+
+      @media (min-width: 768px) {
+        width: 120px;
+        height: 120px;
+      }
+
+      @media (min-width: 1024px) {
+        width: 150px;
+        height: 150px;
+      }
+
+      /* Default Avatar*/
+      .default-avatar{
+        font-size: 82px;
+        color: #E8475F;
+
+        @media (min-width: 768px) {
+          font-size: 110px; 
+        }
+
+        @media (min-width: 1024px) {
+          font-size: 140px;
+        }
+      }
+    }
+
+    /*Camera Icon at the bottom right of PFP*/
+    .camera-overlay{
+      position: absolute; 
+      bottom: 0;
+      right: 0;
+      width: 26px;
+      height: 26px;
+      background: #E8475F;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+
+      @media (min-width: 768px) {
+        width: 32px; 
+        height: 32px;
+      }
+
+      @media (min-width: 1024px) {
+        width: 38px; 
+        height: 38px;
+      }
+
+      /* Camera Icon */
+      .camera-icon{
+        font-size: 14px;
+        color: #ffffff;
+      }
+    }
+  }
+
+  /* Change Pfp */
+  .change-photo-text{
+    color: #E8475F;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 17px;
+    }
+  }
+}
+
+/* Form */
+.form-container{
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* space between form fields*/
+
+  @media (min-width: 768px) {
+    padding: 0 24px; 
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0 32px; 
+  }
+
+/* Form Field Rows*/
+
+  ion-input{
+    font-size: 16px;
+    --padding-top: 4px;
+    --padding-bottom: 8px;
+
+    @media (min-width: 768px) {
+      font-size: 17px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 18px;
+    }
+  }  
+
+  ion-textarea{
+    font-size: 16px;
+    --padding-top: 4px;
+    --padding-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid #dbdbdb;
+
+    @media (min-width: 768px) {
+      font-size: 17px;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 17px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 18px;
+    }
+  }
+
+  // Username field greyed out
+  .readonly-input{
+    color: #aaa;
+  }
+
+  /* Character Count*/
+  .char-count{
+    font-size: 12px;
+    color: #aaa;
+    margin: 0;
+    align-self: flex-end;
+    padding-bottom: 8px;
+
+    @media (min-width: 768px) {
+      font-size: 13px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/* Error Message */
+.error-message{
+  margin: 16px;
+  background: #ffe5e5;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+
+  p{
+    color: #d00;
+    font-size: 14px;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 16px;
+    }
+  }
+}
+
+/* Save Btn */
+.save-btn-container{
+  padding: 16px; /* space around btn*/
+
+  ion-button{
+    --background: #E8475F;
+    --border-radius: 8px;
+    --box-shadow: none;
+    height: 48px;
+    font-weight: 600;
+    font-size: 16px;
+
+    @media (min-width: 768px) {
+      height: 52px; 
+      font-size: 17px;
+    }
+
+    @media (min-width: 1024px) {
+      height: 56px; 
+      font-size: 18px;
+    }
+  }
+}
+
