@@ -38,3 +38,8 @@ class UserProfileSerializer(serializers.ModelSerializer):#used to send user prof
     def get_posts_count(self, obj):
         return obj.posts.count() if hasattr(obj, "posts") else 0
 
+# UPDATING USER PROFILE 
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['display_name', 'bio', 'profile_picture', 'phone']

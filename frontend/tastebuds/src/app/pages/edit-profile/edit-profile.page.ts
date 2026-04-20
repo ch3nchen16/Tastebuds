@@ -13,6 +13,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'; //th
 //CameraResultType= specifies format on how to return photo (Base64), CameraSource = specifies where to get photo from (camera or camera roll)
 //run npm install @capacitor/camera to install it and then ionic build then run npx cap sync to sync it with the native projects (ios and android) so we can use it in our code
 import { CloudinaryService } from '../../services/cloudinary.service'; //service to handle uploading media to Cloudinary
+import { environment } from '../../../environments/environment'; //to get API URL from environment file
 
 @Component({
   selector: 'app-edit-profile',
@@ -53,7 +54,7 @@ export class EditProfilePage implements OnInit {
     }
   ];
 
-  private apiUrl = "http://192.168.1.34:8000/api/users"; //private url for all API calls (only this component can access it)
+  private apiUrl = environment.apiUrl; //private url for all API calls (only this component can access it)
 
   constructor( //injects these so we can use them
     private router: Router,
@@ -177,7 +178,7 @@ export class EditProfilePage implements OnInit {
 
       this.isLoading = false; //hides spinner
       this.router.navigate(['/tabs/profile']); //back ti profile page
-      
+
     } catch (err: any) {
       this.isLoading = false;
       this.errorMessage = 'Failed to save changes. Please try again.';

@@ -5,7 +5,7 @@ from rest_framework.response import Response #response object that converts Pyth
 from rest_framework.permissions import IsAuthenticated, AllowAny #IsAuthenticated = only allows requests w/ valid JWT token
 #AllowAny = allows any request regardless of authentication status (used for registration and login endpoints since users won't have a token yet)
 from rest_framework_simplejwt.tokens import RefreshToken #to generate JWT tokens for users when they register or login
-from .serializers import RegisterSerializer, UserProfileSerializer #imports our serializers
+from .serializers import RegisterSerializer, UserProfileSerializer, UpdateProfileSerializer #imports our serializers
 from .models import User #imports our custom user model
 import firebase_admin # firebase admin SDK for Python
 from firebase_admin import credentials, auth as firebase_auth #credentials=load firebase service account key,
@@ -104,3 +104,15 @@ def get_profile(request, username): #takes username from URL
         return Response(serializer.data)
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+# UPDATE_PROFILE VIEW 
+@api_view(['PUT']) # this decorator tells Django this is an API endpoint that only accepts PUT = updating existing data
+@permission_classes([IsAuthenticated]) #must be logged in to edit profile
+def update_profile(request): 
+    user = request.user #gets logged in user from JWT token so Django knows which profile to update
+    serializer = UpdateProfileSerializer(user, data=request.data, partial=True) # creates UpdateProfileSerializer w/ 3 arguments
+    #user = existing user object to update, data=request.data = new data sent from Ionic, partial = true = only update fields that were sent
+    if serializer.is_valid(): #validates incoming data with rules set in serializer
+        serializer.save() #if passes then saves to postgresql
+        return Response(serializer.data) # returns updated user profile data as JSON back to Ionic
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

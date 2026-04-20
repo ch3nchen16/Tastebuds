@@ -10,4 +10,5 @@ urlpatterns = [
     path('get-email/<str:username>/', views.get_email, name='get_email'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile/<str:username>/', views.get_profile, name='get_profile'),
+    path('update-profile/', views.update_profile, name='update_profile'),
 ]
