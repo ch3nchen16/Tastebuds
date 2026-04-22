@@ -10,9 +10,9 @@ class Post(models.Model): #creates post table in Postgresql. All models inherit 
     ]
 
     #fields for post model (same as our ERD)
-    post_tyoe = models.CharField(max_length=10, choices=POST_TYPES) # Charfield = stores text, max_length = nax characters and choices= only allows recipe or review
+    post_type = models.CharField(max_length=10, choices=POST_TYPES) # Charfield = stores text, max_length = nax characters and choices= only allows recipe or review
     caption = models.TextField(blank=True, null=True) #this field can be left null in the DB and left blank in forms
-    cuisine_type = models.CharField(max_length=50)
+    cuisine_type = models.CharField(max_length=50, blank=True, null=True) #oprional ex. Italian
     created_at = models.DateTimeField(auto_now_add=True) #automatically sets current date time when post is created
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts') #links each post to a user. on_delete-models.CASCADE = if user is deleted then all posts are deleted too. related_names='posts' allows user.posts.all() to get all posts by a user
 
@@ -51,7 +51,7 @@ class Recipe(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='recipe') # each recipe belongs to one post and each post can have at most 1 recipe
     diet_req = models.JSONField(blank=True, null=True) # optionsl JSONField = stores data like lists or dictionaries ex. ["vegan", "gluten-free"]
     cook_time = models.IntegerField() #required
-    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, blank=True, null=True)
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES) #required
     instructions = models.TextField() #stores step by step instructions as long text required
     serving_size = models.IntegerField() # 4 = 4 people required
 
