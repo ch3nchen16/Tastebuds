@@ -1,0 +1,52 @@
+from rest_framework import serializers #gives ModelSerializer, CharField
+from .models import Post, PostMedia, Recipe, Review, RecipeIngredient
+# . means from same folder (posts). imports our post models
+
+# POST MEDIA SERIALIZER
+#converts PostMedia objects to JSON
+class PostMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostMedia
+        fields = ['id', 'media_url', 'media_type'] #media_url = cloudinary URL of image/video
+
+
+# RECIPE INGREDIENT SERIALIZER
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    ingredient_name = serializers.CharField(source='ingredient.ingredient_name')
+     #source='ingredient.ingredient_name' = returns ingredient name instead of id from ingredient foreign key to ingredient model
+
+    #returns ingredient name, quantity and unit 
+    class Meta:
+        model = RecipeIngredient
+        fields = ['id', 'ingredient_name', 'quantity', 'unit']
+
+# RECIPE SERIALIZER
+class RecipeSerializer(serializers.ModelSerializer):
+    #ingredients is a nested serializer that uses RecipeIngredientSerializer to serialize all ingredients in a recipe
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True) # many=True cuz many ingredients. read_only cuz ingredients are not created here (created in RecipeIngredientSerializer)
+
+    #returns recipe details with list of ingredients
+    class Meta:
+        model = Recipe
+        fields = ['id', 'diet_req', 'cook_time', 'difficulty', 'instructions', 'serving_size', 'ingredients']
+
+
+# REVIEW SERIALIZER
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'restaurant_name', 'location', 'price', 'rating', 'diet_option', 'dining_type']
+
+
+# POST SERIALIZER
+class PostSerializer(serializers.ModelSerializer):
+    #nested serializers 
+    media = PostMediaSerializer(many=True, read_only=True) # many cuz a post can have have manu photos
+    recipe = RecipeSerializer(read_only=True) #if post is a recipe it returns full recipe data, if review it returns null
+    review = ReviewSerializer(read_only=True) 
+    username = serializers.CharField(source='user.username', read_only=True) # instead of returning user id it will return username instead followung FK to User model (Displays who made the post)
+    profile_picture = serializers.CharField(source='user.profile_picture', read_only=True) #returns post's user pfp URL to display their avatar next to the post
+
+    class Meta:
+        model = Post
+        fields = ['id', 'post_type', 'caption', 'cuisine_type', 'created_at', 'username', 'profile_picture', 'media', 'recipe', 'review']
