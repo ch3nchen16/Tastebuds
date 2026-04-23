@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls'))
+    path('admin/', admin.site.urls), #routes to django's admin dashboard http://127.0.0.1:8000/admin/
+    path('api/users/', include('users.urls')), #tells django to look inside users/urls.py http://127.0.0.1:8000/api/users/
+    path('api/posts/', include('posts.urls')) #look inside posts/urls.py http://127.0.0.1:8000/api/posts/
 ]
