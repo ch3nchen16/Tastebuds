@@ -1,13 +1,342 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>create-post</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="onCancel()">
+        <span class="cancel-btn">Cancel</span>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>New Post</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onShare()" [disabled]="isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading" class="share-btn">Share</span>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">create-post</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="create-post-content">
+  <div class="create-post-container">
+    <!-- POST TYPE TOGGLE -->
+    <div class="toggle-container">
+      <div class="toggle-pill">
+        <div
+          class="toggle-option"
+          [class.active]="postType === 'recipe' "
+          (click)="setPostType('recipe')"
+        >
+          Recipe
+        </div>
+        <div
+          class="toggle-option"
+          [class.active]="postType === 'review' "
+          (click)="setPostType('review')"
+        >
+          Review
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIA UPLOAD -->
+    <div class="media-section">
+      <div class="media-upload-box" (click)="onAddMedia()">
+        <ion-icon name="image-outline" class="media-icon"></ion-icon>
+        <p class="media-text">Add Photos / Videos</p>
+        <p class="media-subtext">Up to 10 files</p>
+      </div>
+
+      <!-- MEDIA PREVIEWS -->
+      <div class="media-previews" *ngIf="mediaFiles.length > 0">
+        <div
+          class="media-preview"
+          *ngFor="let media of mediaFiles; let i = index"
+        >
+          <img
+            *ngIf="media.type === 'image'"
+            [src]="media.url"
+            class="preview-img"
+          />
+          <video
+            *ngIf="media.type === 'video'"
+            [src]="media.url"
+            class="preview-img"
+          ></video>
+          <div class="remove-media" (click)="removeMedia(i)">
+            <ion-icon name="close-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <ion-spinner *ngIf="isUploadingMedia" name="crescent"></ion-spinner>
+    </div>
+
+    <!-- FOR FILE SELECTION ON BROWSER -->
+    <input
+      type="file"
+      #fileInput
+      accept="image/*,video/*"
+      multiple
+      style="display: none"
+      (change)="onFileSelected($event)"
+    />
+
+    <!-- SHARED FIELDS BETW EACH POST TYPE-->
+    <div class="form-section">
+      <ion-input
+        fill="outline"
+        placeholder="Write a caption"
+        [(ngModel)]="caption"
+      ></ion-input>
+      <ion-input
+        fill="outline"
+        placeholder="Cuisine type (e.g Italian)"
+        [(ngModel)]="cuisineType"
+      ></ion-input>
+    </div>
+
+    <!-- RECIPE FORM -->
+    <div *ngIf="postType === 'recipe'">
+      <div class="section-title">Recipe Details</div>
+      <div class="form-section">
+        <!-- Cook time & serving size -->
+        <div class="two-col">
+          <ion-input
+            fill="outline"
+            type="number"
+            placeholder="Cook Time (mins)"
+            [(ngModel)]="cookTime"
+          ></ion-input>
+          <ion-input
+            fill="outline"
+            type="number"
+            placeholder="Servings"
+            [(ngModel)]="servingSize"
+          ></ion-input>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="label">Difficulty</div>
+        <div class="pill-row">
+          <div
+            class="pill"
+            [class.pill-active]="difficulty === 'easy'"
+            (click)="setDifficulty('easy')"
+          >
+            Easy
+          </div>
+          <div
+            class="pill"
+            [class.pill-active]="difficulty === 'medium'"
+            (click)="setDifficulty('medium')"
+          >
+            Medium
+          </div>
+          <div
+            class="pill"
+            [class.pill-active]="difficulty === 'advanced'"
+            (click)="setDifficulty('advanced')"
+          >
+            Advanced
+          </div>
+        </div>
+
+        <!-- Dietary Requirements -->
+        <div class="label">Dietary Requirements</div>
+        <div class="pill-row">
+          <div
+            class="pill"
+            *ngFor="let option of dietReqOptions"
+            [class.pill-active]="dietReq.includes(option)"
+            (click)="toggleDietReq(option)"
+          >
+            {{option}}
+          </div>
+        </div>
+
+        <!-- Custom Diet Req -->
+        <div class="custom-input-row">
+          <ion-input
+            fill="outline"
+            placeholder="Add custom requirement"
+            [(ngModel)]="customDietReq"
+          ></ion-input>
+          <div class="add-btn" (click)="addCustomDietReq()">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Show custom added diet reqs -->
+        <div class="pill-row" *ngIf="dietReq.length > 0">
+          <div
+            class="pill pill-active"
+            *ngFor="let item of dietReq"
+            (click)="toggleDietReq(item)"
+          >
+            {{item}} ✕
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredients -->
+      <div class="section-title">Ingredients</div>
+      <div class="form-section">
+        <div
+          class="ingredient-row"
+          *ngFor="let ingredient of ingredients; let i = index"
+        >
+          <ion-input
+            fill="outline"
+            placeholder="Ingredient"
+            [(ngModel)]="ingredient.name"
+          ></ion-input>
+          <ion-input
+            fill="outline"
+            placeholder="Qty"
+            [(ngModel)]="ingredient.quantity"
+          ></ion-input>
+          <ion-input
+            fill="outline"
+            placeholder="Unit"
+            [(ngModel)]="ingredient.unit"
+          ></ion-input>
+          <div
+            class="remove-btn"
+            (click)="removeIngredient(i)"
+            *ngIf="ingredients.length > 1"
+          >
+            <ion-icon name="close-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="add-link" (click)="addIngredient()">+ Add Ingredient</div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="section-title">Instructions</div>
+      <div class="form-section">
+        <div
+          class="instruction-row"
+          *ngFor="let step of instructions; let i = index"
+        >
+          <div class="step-number">{{i + 1}}</div>
+          <ion-input
+            fill="outline"
+            [placeholder]="'Step ' + (i + 1) + '...'"
+            [(ngModel)]="instructions[i]"
+          ></ion-input>
+          <div
+            class="remove-btn"
+            (click)="removeStep(i)"
+            *ngIf="instructions.length > 1"
+          >
+            <ion-icon name="close-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="add-link" (click)="addStep()">+ Add Step</div>
+      </div>
+    </div>
+
+    <!-- REVIEW POST -->
+    <div *ngIf="postType === 'review'">
+      <div class="section-title">Review Details</div>
+      <div class="form-section">
+        <!-- Restaurant name -->
+        <ion-input
+          fill="outline"
+          placeholder="Restaurant Name"
+          [(ngModel)]="restaurantName"
+        ></ion-input>
+
+        <!-- Location -->
+        <ion-input
+          fill="outline"
+          placeholder="Location (e.g Dublin, Ireland)"
+          [(ngModel)]="location"
+        ></ion-input>
+
+        <!-- Price range -->
+        <select class="price-select" [(ngModel)]="price">
+          <option value="">Price per Person</option>
+          <option value="€0-10">€0 - €10</option>
+          <option value="€10-20">€10 - €20</option>
+          <option value="€20-30">€20 - €30</option>
+          <option value="€30-40">€30 - €40</option>
+          <option value="€40-50">€40 - €50</option>
+          <option value="€50-60">€50 - €60</option>
+          <option value="€60-70">€60 - €70</option>
+          <option value="€70-80">€70 - €80</option>
+          <option value="€80-90">€80 - €90</option>
+          <option value="€90-100">€90 - €100</option>
+          <option value="€100+">€100+</option>
+        </select>
+
+        <!-- Star Rating -->
+        <div class="label">Rating</div>
+        <div class="star-row">
+          <span
+            class="star"
+            *ngFor="let star of [1,2,3,4,5]"
+            [class.star-active]="star <= rating"
+            (click)="setRating(star)"
+            >★</span
+          >
+        </div>
+
+        <!-- Dining Type -->
+        <div class="label">Dining Type</div>
+        <div class="pill-row">
+          <div
+            class="pill"
+            *ngFor="let option of diningTypeOptions"
+            [class.pill-active]="diningType.includes(option)"
+            (click)="toggleDiningType(option)"
+          >
+            {{option}}
+          </div>
+        </div>
+
+        <!-- Custom Dining Type -->
+        <div class="custom-input-row">
+          <ion-input
+            fill="outline"
+            placeholder="Add custom dining type"
+            [(ngModel)]="customDiningType"
+          ></ion-input>
+          <div class="add-btn" (click)="addCustomDiningType()">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Dietary Options -->
+        <div class="label">Any Dietary Options Provided?</div>
+        <div class="pill-row">
+          <div
+            class="pill"
+            *ngFor="let option of dietOptionOptions"
+            [class.pill-active]="dietOption.includes(option)"
+            (click)="toggleDietOptions(option)"
+          >
+            {{option}}
+          </div>
+        </div>
+
+        <!-- Custom Dietary Options -->
+        <div class="custom-input-row">
+          <ion-input
+            fill="outline"
+            placeholder="Add custom dietary option"
+            [(ngModel)]="customDietOption"
+          ></ion-input>
+          <div class="add-btn" (click)="addCustomDietOption()">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      <p>{{errorMessage}}</p>
+    </div>
+  </div>
 </ion-content>
