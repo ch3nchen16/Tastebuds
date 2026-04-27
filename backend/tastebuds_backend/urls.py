@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/posts/', include('posts.urls')), #look inside posts/urls.py http://127.0.0.1:8000/api/posts/
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), #.as_view() converts class based view to function Django can use
     # when refreshToken() method in auth.ts sends POST req to this URL w/ refresh token, Django validates it and returns new access token
+    path('api/interactions/', include('interactions.urls')),
 ]
