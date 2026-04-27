@@ -1,0 +1,285 @@
+.search-content {
+    --background: #ffffff;
+}
+
+ion-toolbar {
+    --background: #ffffff;
+}
+
+/* SEARCH BAR */
+.search-container {
+    padding: 8px 16px; /* Mobile 8px top/btm 16px lft/right */
+
+    @media (min-width: 768px) {
+        padding: 10px 16px;   /* tablet */ 
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 12px 20px;   /* desktop */ 
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* SEARCH BAR */
+    ion-searchbar {
+        --border-radius: 12px; /*round corners*/
+        --background: #f5f5f5;
+        --placeholder-color: #888;
+        --icon-color: #888;
+        --color: #000000;
+        padding: 0; /*remove default padding cuz we alread have container padding*/
+
+        @media (min-width: 768px) {
+            font-size: 15px;  
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 16px;  
+        }
+    }
+}
+
+/* LOADING  SPINNER */
+.loading-container {
+    display: flex;
+    justify-content: center; /*centres horizontally*/
+    padding: 40px 0; /*space top/btm*/
+
+    @media (min-width: 768px) {
+        font-size: 15px;  
+    }
+
+    @media (min-width: 1024px) {
+        font-size: 16px;  
+    }
+}
+
+/* RESULTS */
+.results-container {
+    padding: 0 12px; /*padding left/right*/
+
+    @media (min-width: 768px) {
+        padding: 0 16px; 
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 20px;      
+        max-width: 700px;
+        margin: 0 auto;
+    }
+}
+
+/* USER DISPLAYED */
+.user-item {
+    display: flex;
+    align-items: center; /*centres vertically*/
+    gap: 10px; /*space betw pfp and user info*/
+    padding: 10px 0;
+    border-bottom: 0.5px solid #f5f5f5; /*divider betw results*/
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+        gap: 12px;            
+        padding: 12px 0;
+    }
+
+    @media (min-width: 1024px) {
+        gap: 14px;            
+        padding: 14px 0;
+    }
+
+    &:active { /*when user clicks item becomes transparent*/
+        opacity: 0.7;
+    }
+
+    &:last-child { /*removes bottom border from very last result*/
+        border-bottom: none;
+    }
+
+    /* PROFILE PICTURE */
+    .user-avatar {
+        width: 40px; /*circle*/
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid #E8475F;
+        flex-shrink: 0; /*prevents pfp from shrinking when username is too long*/
+
+        @media (min-width: 768px) {
+            width: 46px;      
+            height: 46px;
+        }
+
+        @media (min-width: 1024px) {
+            width: 52px;      
+            height: 52px;
+        }
+    }
+
+    .avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1.5px solid #E8475F;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        @media (min-width: 768px) {
+            width: 46px;      
+            height: 46px;
+        }
+
+        @media (min-width: 1024px) {
+            width: 52px;      
+            height: 52px;
+        }
+
+        ion-icon {
+            font-size: 38px;
+            color: #E8475F;
+
+            @media (min-width: 768px) {
+                font-size: 44px; 
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 50px; 
+            }
+        }
+    }
+
+    /* USERNAME DISPLAY NAME  */
+    .user-info {
+        display: flex;
+        flex-direction: column; /*stackers username above display name*/
+        gap: 2px;
+
+        .user-username {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000000;
+
+            @media (min-width: 768px) {
+                font-size: 14px; 
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 15px; 
+            }
+        }
+
+        .user-displayname {
+            font-size: 12px;
+            color: #888;
+
+            @media (min-width: 768px) {
+                font-size: 13px; // tablet
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 14px; // desktop
+            }
+        }
+    }
+}
+
+/*  NO RESULTS*/
+.no-results {
+    display: flex;
+    flex-direction: column; /*stacks icon abover text*/
+    align-items: center;
+    padding: 50px 16px;
+    color: #888;
+    gap: 10px; /*space betw icon and text*/
+
+    @media (min-width: 768px) {
+        padding: 60px 20px;   
+        gap: 12px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 80px 24px;  
+        gap: 14px;
+    }
+
+    .no-results-icon {
+        font-size: 44px;
+        color: #dbdbdb;
+
+        @media (min-width: 768px) {
+            font-size: 52px;  
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 60px;  
+        }
+    }
+
+    p {
+        font-size: 13px;
+        text-align: center; //*centres text*/
+        margin: 0; /*removes default padding*/
+
+        @media (min-width: 768px) {
+            font-size: 14px;  
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 15px;  
+        }
+    }
+}
+
+// INITIAL STATE
+.initial-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 16px;
+    color: #888;
+    gap: 10px;
+
+    @media (min-width: 768px) {
+        padding: 60px 20px;   
+        gap: 12px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 80px 24px;   
+        gap: 14px;
+    }
+
+    .initial-icon {
+        font-size: 44px;
+        color: #dbdbdb;
+
+        @media (min-width: 768px) {
+            padding: 60px 20px;   
+            gap: 12px;
+        }
+
+        @media (min-width: 1024px) {
+            padding: 80px 24px;   
+            gap: 14px;
+        }
+    }
+
+    p {
+        font-size: 13px;
+        margin: 0;
+
+        @media (min-width: 768px) {
+            font-size: 52px;  
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 60px;  
+        }
+    }
+}

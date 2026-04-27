@@ -11,6 +11,7 @@ import firebase_admin # firebase admin SDK for Python
 from firebase_admin import credentials, auth as firebase_auth #credentials=load firebase service account key,
 #auth renamed to firebase_auth to avoid confusion w/ Django auth used for Firebase authentication functions like verifying tokens and getting user info from Firebase token
 import os #gives access to environment variables
+from django.db import models
 
 #initialize Firebase Admin SDK
 if not firebase_admin._apps: #checks if the Firebase app has already been initialized to prevent re-initialization errors
@@ -116,3 +117,19 @@ def update_profile(request):
         serializer.save() #if passes then saves to postgresql
         return Response(serializer.data) # returns updated user profile data as JSON back to Ionic
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# SEARCH USERS
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def search_users(request):
+    query = request.query_params.get('q', '')
+    if not query or len(query) < 2:
+        return Response([])
+    
+    users = User.objects.filter(
+        models.Q(username__icontains=query) |
+        models.Q(display_name__icontains=query)
+    )[:20]  # limit to 20 results
+    
+    serializer = UserProfileSerializer(users, many=True)
+    return Response(serializer.data)

@@ -1,13 +1,70 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>search</ion-title>
+    <ion-title>Search</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">search</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="search-content">
+  <!-- SEARCH BAR -->
+  <div class="search-container">
+    <ion-searchbar
+      placeholder="Search users or posts..."
+      [(ngModel)]="searchQuery"
+      (ionInput)="onSearch($event)"
+      debounce="500"
+      animated
+    >
+      <!-- debounce="500" - waits 500 ms after user stops typing (prevents too many api calls)-->
+    </ion-searchbar>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- SEARCH RESULTS -->
+  <div class="results-container" *ngIf="!isLoading && searchResults.length > 0">
+    <div
+      class="user-item"
+      *ngFor="let user of searchResults"
+      (click)="onUserClick(user.username)"
+    >
+      <!-- loops thru each user in searchResults -->
+
+      <!-- PROFILE PICTURE -->
+      <img
+        *ngIf="user.profile_picture"
+        [src]="user.profile_picture"
+        class="user-avatar"
+      />
+      <!-- shows default avatar if no pfp -->
+      <div *ngIf="!user.profile_picture" class="avatar-placeholder">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+
+      <!-- USER INFO -->
+      <div class="user-info">
+        <span class="user-username">{{user.username}}</span>
+        <span class="user-displayname" *ngIf="user.display_name"
+          >{{user.display_name}}</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div
+    class="no-results"
+    *ngIf="!isLoading && hasSearched && searchResults.length === 0"
+  >
+    <ion-icon name="search-outline" class="no-results-icon"></ion-icon>
+    <p>No users found for "{{searchQuery}}"</p>
+  </div>
+
+  <!-- Initial State -->
+  <div class="initial-state" *ngIf="!hasSearched && !isLoading">
+    <ion-icon name="search-outline" class="initial-icon"></ion-icon>
+    <p>Search for users by username</p>
+  </div>
 </ion-content>
