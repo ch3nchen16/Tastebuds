@@ -26,8 +26,10 @@ export class ProfilePage { //we removed OnInit because it only runs once so if y
   isFollowing = false; //true if you follow this user
   activeTab = "all"; // all/revies/recipes
   posts: any[] = []; //list of posts to display based on active tab
+  isLoadingFollow = false;
 
   private apiUrl = environment.apiUrl; //base URL for backend API, used in all API calls in this component
+  private interactionsUrl = environment.apiUrl.replace('/users', '/interactions');
 
   constructor(
     private route: ActivatedRoute, //to get username from URL
@@ -56,15 +58,20 @@ export class ProfilePage { //we removed OnInit because it only runs once so if y
         this.http.get(`${this.apiUrl}/profile/${this.username}/`)
       );
       this.user = response;
-      await this.loadPosts();
+      
 
       //Check if this is the logged in user's profile
       const currentUser = this.authService.getCurrentUser();
       const currentUsername = currentUser?.username?.trim().toLowerCase();
       const profileUsername = this.username?.trim().toLowerCase();
-
       this.isOwnProfile = currentUsername === profileUsername;
 
+      //Check follow status if viewing someone else's profile
+      if (!this.isOwnProfile) {
+        await this.checkIsFollowing();
+      }
+
+      await this.loadPosts();
     } catch (err) {
       console.error("Failed to load profile", err)
     }
@@ -90,6 +97,66 @@ export class ProfilePage { //we removed OnInit because it only runs once so if y
     return this.posts; // all posts
   }
 
+  async checkIsFollowing() {
+  try {
+    const token = await this.authService.getValidToken(); //gets valid JWT token (refreshes if expired)
+    const response: any = await lastValueFrom(  //sends GET /api/interactions/is-following/testuser/
+      this.http.get(`${this.interactionsUrl}/is-following/${this.username}/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    );
+    this.isFollowing = response.is_following; //Fjnago returns is following: true or : false then updates isFollowing so btn changes
+  } catch (err) {
+    console.error('Failed to check follow status', err);
+  }
+}
+
+async onToggleFollow() {
+  this.isLoadingFollow = true; //shows spinner
+  try {
+    const token = await this.authService.getValidToken();
+    const currentUser = this.authService.getCurrentUser();
+
+    if (this.isFollowing) { //if following
+      // Unfollow
+      await lastValueFrom( //send DELETE /api/interactions/unfollow/testuser/
+        this.http.delete(`${this.interactionsUrl}/unfollow/${this.username}/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      );
+      this.isFollowing = false;
+
+      //decrease other user's follower count
+      if (this.user) this.user.followers_count--;
+      // decrease my followers count
+      if (currentUser) {
+        currentUser.following_count = (currentUser.following_count || 1) - 1;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+      }
+    } else {
+
+      // Follow
+      await lastValueFrom(
+        this.http.post(`${this.interactionsUrl}/follow/${this.username}/`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      );
+      this.isFollowing = true;
+      // increase the other user's follower count
+      if (this.user) this.user.followers_count++;
+      // increase my following count
+      if (currentUser) {
+        currentUser.following_count = (currentUser.following_count || 0) + 1;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+      }
+    }
+    this.isLoadingFollow = false;
+  } catch (err) {
+    console.error('Failed follow', err);
+    this.isLoadingFollow = false;
+  }
+}
+
   // Switching between tabs
   setTab(tab: string) {
     this.activeTab = tab;
@@ -98,11 +165,6 @@ export class ProfilePage { //we removed OnInit because it only runs once so if y
   //Navigate to edit profile page
   onEditProfile() {
     this.router.navigate(['/edit-profile']);
-  }
-
-  // Follow/Unfollow
-  onToggleFollow() {
-    this.isFollowing = !this.isFollowing;
   }
 
   // Navigate to settings page
