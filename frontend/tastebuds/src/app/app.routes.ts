@@ -54,9 +54,6 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
       },
-      { path: 'profile/:username', // when you click on a profile
-        loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
-      },
       {
         path: '',
         redirectTo: 'profile',

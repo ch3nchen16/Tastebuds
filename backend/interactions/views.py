@@ -24,7 +24,7 @@ def follow_user(request, username): #username comes from URL e.g /api/interactio
             return Response({'error': 'You are already following this user'}, status=status.HTTP_400_BAD_REQUEST)
 
         #create follow
-        Follow.objects.create(follower=request.user, following=user_to_follow)
+        Follow.objects.create(follower=request.user, following=user_to_follow) #creates new follow record in postgres linking the two users
         return Response({'message': f'You are now following {username}'}, status=status.HTTP_201_CREATED)
 
     except User.DoesNotExist:

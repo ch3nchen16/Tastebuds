@@ -5,17 +5,18 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { logOutOutline, settingsOutline, personCircleOutline, copyOutline } from 'ionicons/icons';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { logOutOutline, settingsOutline, personCircleOutline, copyOutline, arrowBackOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment'; //to get API URL from environment file
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, RouterModule, FormsModule, IonButtons, IonButton, IonIcon]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, RouterModule, FormsModule, IonButtons, IonButton, IonIcon, IonSpinner]
 })
 export class ProfilePage { //we removed OnInit because it only runs once so if you create a new post it will not run again and doesnt display
   //we changed it to ionViewWillEnter
@@ -35,9 +36,11 @@ export class ProfilePage { //we removed OnInit because it only runs once so if y
     private route: ActivatedRoute, //to get username from URL
     private router: Router,  //to navigate to other pages
     private http: HttpClient, //to make API calls
-    private authService: AuthService //to get current user info and auth token
+    private authService: AuthService, //to get current user info and auth token
+    private location: Location 
+
   ) { 
-    addIcons({ logOutOutline, settingsOutline, personCircleOutline, copyOutline }); 
+    addIcons({ logOutOutline, settingsOutline, personCircleOutline, copyOutline, arrowBackOutline }); 
   }
 
   async ionViewWillEnter() { //we use this isntead of ngOnInit because it runs every time the profile page is about to be visible S
@@ -164,7 +167,7 @@ async onToggleFollow() {
 
   //Navigate to edit profile page
   onEditProfile() {
-    this.router.navigate(['/edit-profile']);
+    this.router.navigate(['edit-profile']);
   }
 
   // Navigate to settings page
@@ -188,8 +191,14 @@ async onToggleFollow() {
     console.log("View following");
   }
 
+  // When user clicks on post on profile grid
   onPostClick(postId: number) {
     this.router.navigate(['/post', postId]);
+  }
+
+  //to go back to previous page after clicking on other user's profile
+  onBack() {
+    this.location.back(); // goes back to previous page
   }
 
 }

@@ -11,6 +11,7 @@ import {
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth'; 
 import { environment } from '../../../environments/environment';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-post-detail',
@@ -36,7 +37,8 @@ export class PostDetailPage implements OnInit {
     private route: ActivatedRoute,  //gets post id from URL
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private location: Location //so we can go backt to previous page
   ) {
     addIcons({ arrowBackOutline, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline });
   }
@@ -88,6 +90,6 @@ export class PostDetailPage implements OnInit {
   }
 
   onBack() {
-    this.router.navigate(['/tabs/profile']);
+    this.location.back();
   }
 }

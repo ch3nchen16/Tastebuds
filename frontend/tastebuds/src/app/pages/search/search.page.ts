@@ -66,6 +66,6 @@ export class SearchPage {
 
   // Navigate to user's profile
   onUserClick(username: string) {
-    this.router.navigate(['/tabs/profile', username]);
+    this.router.navigate(['profile', username]);
   }
 }

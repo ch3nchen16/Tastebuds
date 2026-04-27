@@ -132,7 +132,8 @@ ion-toolbar {
   }
 
   .media-icon {
-    font-size: 26px;        
+    font-size: 26px;   
+    color: #E8475F;     
 
     @media (min-width: 768px) {
       font-size: 30px;       
@@ -142,7 +143,7 @@ ion-toolbar {
       font-size: 34px;       
     }
 
-    color: #E8475F;
+    
   }
 
   .media-text {
@@ -536,13 +537,14 @@ ion-toolbar {
 .error-message {
   background: #ffeaea;       
   border-radius: 8px;
-  padding: 10px;           
+  padding: 10px; 
+  text-align: center;          
 
   @media (min-width: 768px) {
     padding: 12px;
   }
 
-  text-align: center;
+  
 
   p {
     color: #E8475F;
