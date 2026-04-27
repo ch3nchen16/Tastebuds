@@ -7,12 +7,6 @@
     </ion-buttons>
 
     <ion-title>New Post</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="onShare()" [disabled]="isLoading">
-        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-        <span *ngIf="!isLoading" class="share-btn">Share</span>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -21,11 +15,13 @@
     <!-- POST TYPE TOGGLE -->
     <div class="toggle-container">
       <div class="toggle-pill">
+        <!-- .active = adds active CSS class when recipe is selected-->
         <div
           class="toggle-option"
           [class.active]="postType === 'recipe' "
           (click)="setPostType('recipe')"
         >
+          <!-- calls setPostType() in typescript to switch forms-->
           Recipe
         </div>
         <div
@@ -42,16 +38,18 @@
     <div class="media-section">
       <div class="media-upload-box" (click)="onAddMedia()">
         <ion-icon name="image-outline" class="media-icon"></ion-icon>
-        <p class="media-text">Add Photos / Videos</p>
+        <p class="media-text">Add Photos / Videos (required)</p>
         <p class="media-subtext">Up to 10 files</p>
       </div>
 
       <!-- MEDIA PREVIEWS -->
       <div class="media-previews" *ngIf="mediaFiles.length > 0">
+        <!-- only shows when mediaFiles.length > 0-->
         <div
           class="media-preview"
           *ngFor="let media of mediaFiles; let i = index"
         >
+          <!-- loops thru each media file -->
           <img
             *ngIf="media.type === 'image'"
             [src]="media.url"
@@ -63,6 +61,7 @@
             class="preview-img"
           ></video>
           <div class="remove-media" (click)="removeMedia(i)">
+            <!-- removes media at that index -->
             <ion-icon name="close-outline"></ion-icon>
           </div>
         </div>
@@ -80,17 +79,18 @@
       style="display: none"
       (change)="onFileSelected($event)"
     />
+    <!-- multiple allows selecting multiplle files at once -->
 
     <!-- SHARED FIELDS BETW EACH POST TYPE-->
     <div class="form-section">
       <ion-input
         fill="outline"
-        placeholder="Write a caption"
+        placeholder="Write a caption (optional)"
         [(ngModel)]="caption"
       ></ion-input>
       <ion-input
         fill="outline"
-        placeholder="Cuisine type (e.g Italian)"
+        placeholder="Cuisine type e.g Italian (optional)"
         [(ngModel)]="cuisineType"
       ></ion-input>
     </div>
@@ -104,13 +104,13 @@
           <ion-input
             fill="outline"
             type="number"
-            placeholder="Cook Time (mins)"
+            placeholder="Cook Time in minutes (required)"
             [(ngModel)]="cookTime"
           ></ion-input>
           <ion-input
             fill="outline"
             type="number"
-            placeholder="Servings"
+            placeholder="Serving (required)"
             [(ngModel)]="servingSize"
           ></ion-input>
         </div>
@@ -142,7 +142,7 @@
         </div>
 
         <!-- Dietary Requirements -->
-        <div class="label">Dietary Requirements</div>
+        <div class="label">Dietary Requirements (optional)</div>
         <div class="pill-row">
           <div
             class="pill"
@@ -160,6 +160,7 @@
             fill="outline"
             placeholder="Add custom requirement"
             [(ngModel)]="customDietReq"
+            autocapitalize="sentences"
           ></ion-input>
           <div class="add-btn" (click)="addCustomDietReq()">
             <ion-icon name="add-outline"></ion-icon>
@@ -183,21 +184,21 @@
       <div class="form-section">
         <div
           class="ingredient-row"
-          *ngFor="let ingredient of ingredients; let i = index"
+          *ngFor="let ingredient of ingredients; let i = index; trackBy: trackByIndex"
         >
           <ion-input
             fill="outline"
-            placeholder="Ingredient"
+            placeholder="Ingredient (required)"
             [(ngModel)]="ingredient.name"
           ></ion-input>
           <ion-input
             fill="outline"
-            placeholder="Qty"
+            placeholder="Qty (required)"
             [(ngModel)]="ingredient.quantity"
           ></ion-input>
           <ion-input
             fill="outline"
-            placeholder="Unit"
+            placeholder="Unit (required)"
             [(ngModel)]="ingredient.unit"
           ></ion-input>
           <div
@@ -212,11 +213,11 @@
       </div>
 
       <!-- Instructions -->
-      <div class="section-title">Instructions</div>
+      <div class="section-title">Instructions (required)</div>
       <div class="form-section">
         <div
           class="instruction-row"
-          *ngFor="let step of instructions; let i = index"
+          *ngFor="let step of instructions; let i = index; trackBy: trackByIndex"
         >
           <div class="step-number">{{i + 1}}</div>
           <ion-input
@@ -243,20 +244,20 @@
         <!-- Restaurant name -->
         <ion-input
           fill="outline"
-          placeholder="Restaurant Name"
+          placeholder="Restaurant Name (required)"
           [(ngModel)]="restaurantName"
         ></ion-input>
 
         <!-- Location -->
         <ion-input
           fill="outline"
-          placeholder="Location (e.g Dublin, Ireland)"
+          placeholder="Location e.g Dublin, Ireland (required)"
           [(ngModel)]="location"
         ></ion-input>
 
         <!-- Price range -->
         <select class="price-select" [(ngModel)]="price">
-          <option value="">Price per Person</option>
+          <option value="">Price per Person (required)</option>
           <option value="€0-10">€0 - €10</option>
           <option value="€10-20">€10 - €20</option>
           <option value="€20-30">€20 - €30</option>
@@ -271,7 +272,7 @@
         </select>
 
         <!-- Star Rating -->
-        <div class="label">Rating</div>
+        <div class="label">Rating (required)</div>
         <div class="star-row">
           <span
             class="star"
@@ -283,7 +284,7 @@
         </div>
 
         <!-- Dining Type -->
-        <div class="label">Dining Type</div>
+        <div class="label">Dining Type (optional)</div>
         <div class="pill-row">
           <div
             class="pill"
@@ -301,20 +302,32 @@
             fill="outline"
             placeholder="Add custom dining type"
             [(ngModel)]="customDiningType"
+            autocapitalize="sentences"
           ></ion-input>
           <div class="add-btn" (click)="addCustomDiningType()">
             <ion-icon name="add-outline"></ion-icon>
           </div>
         </div>
 
+        <!-- Show custom Dining Type -->
+        <div class="pill-row" *ngIf="diningType.length > 0">
+          <div
+            class="pill pill-active"
+            *ngFor="let option of diningType"
+            (click)="toggleDiningType(option)"
+          >
+            {{option}} ✕
+          </div>
+        </div>
+
         <!-- Dietary Options -->
-        <div class="label">Any Dietary Options Provided?</div>
+        <div class="label">Any Dietary Options Provided? (optional)</div>
         <div class="pill-row">
           <div
             class="pill"
             *ngFor="let option of dietOptionOptions"
             [class.pill-active]="dietOption.includes(option)"
-            (click)="toggleDietOptions(option)"
+            (click)="toggleDietOption(option)"
           >
             {{option}}
           </div>
@@ -326,9 +339,21 @@
             fill="outline"
             placeholder="Add custom dietary option"
             [(ngModel)]="customDietOption"
+            autocapitalize="sentences"
           ></ion-input>
           <div class="add-btn" (click)="addCustomDietOption()">
             <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Show custom Diet Option -->
+        <div class="pill-row" *ngIf="dietOption.length > 0">
+          <div
+            class="pill pill-active"
+            *ngFor="let option of dietOption"
+            (click)="toggleDietOption(option)"
+          >
+            {{option}} ✕
           </div>
         </div>
       </div>
@@ -337,6 +362,14 @@
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-message">
       <p>{{errorMessage}}</p>
+    </div>
+
+    <!-- Share Button -->
+    <div class="share-btn-container">
+      <ion-button expand="block" (click)="onShare()" [disabled]="isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading">Share</span>
+      </ion-button>
     </div>
   </div>
 </ion-content>

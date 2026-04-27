@@ -72,8 +72,8 @@ class RecipeIngredient(models.Model): #bridge table in our ERD
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients') #recipe can use many ingredients
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE) #each ingredient can be used in many recipes
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) #ex. 2.5 cups of flour
-    unit = models.CharField(max_length=50, blank=True, null=True) #ex. cups, grams
+    quantity = models.DecimalField(max_digits=10, decimal_places=2) #ex. 2.5 cups of flour, req
+    unit = models.CharField(max_length=50) #ex. cups, grams req
 
     def __str__(self):
         return f"{self.ingredient.ingredient_name} for recipe {self.recipe.id}"
@@ -88,7 +88,7 @@ class Review(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='review') #each review can only belong to one post & each post can have only 1 review
     restaurant_name = models.CharField(max_length=100) #required
     location = models.CharField(max_length=100) #required
-    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    price = models.CharField(max_length=100) #required
     rating = models.IntegerField(choices=RATING_CHOICES) #required
     diet_option = models.JSONField(blank=True, null=True) #optional
     dining_type = models.JSONField(blank=True, null=True) #optional ex fine dining, casual, fast food

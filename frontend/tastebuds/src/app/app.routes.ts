@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
   },
   {
+    path: 'post/:id',
+    loadComponent: () => import('./pages/post-detail/post-detail.page').then(m => m.PostDetailPage)
+  },
+  {
     path: 'tabs',
     loadComponent: () => import('./pages/tabs/tabs.page').then(m => m.TabsPage),
     children: [

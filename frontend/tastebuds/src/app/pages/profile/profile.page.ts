@@ -5,7 +5,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { logOutOutline, settingsOutline, personCircleOutline } from 'ionicons/icons';
+import { logOutOutline, settingsOutline, personCircleOutline, copyOutline } from 'ionicons/icons';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment'; //to get API URL from environment file
@@ -17,7 +17,8 @@ import { environment } from '../../../environments/environment'; //to get API UR
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, RouterModule, FormsModule, IonButtons, IonButton, IonIcon]
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage { //we removed OnInit because it only runs once so if you create a new post it will not run again and doesnt display
+  //we changed it to ionViewWillEnter
 
   user: any = null; //stores user data from Django
   username = ""; 
@@ -34,10 +35,10 @@ export class ProfilePage implements OnInit {
     private http: HttpClient, //to make API calls
     private authService: AuthService //to get current user info and auth token
   ) { 
-    addIcons({ logOutOutline, settingsOutline, personCircleOutline }); 
+    addIcons({ logOutOutline, settingsOutline, personCircleOutline, copyOutline }); 
   }
 
-  async ngOnInit() {
+  async ionViewWillEnter() { //we use this isntead of ngOnInit because it runs every time the profile page is about to be visible S
   
     // Get username from URL or use logged in user's username
     this.route.params.subscribe(async params => {
@@ -55,6 +56,7 @@ export class ProfilePage implements OnInit {
         this.http.get(`${this.apiUrl}/profile/${this.username}/`)
       );
       this.user = response;
+      await this.loadPosts();
 
       //Check if this is the logged in user's profile
       const currentUser = this.authService.getCurrentUser();
@@ -65,6 +67,19 @@ export class ProfilePage implements OnInit {
 
     } catch (err) {
       console.error("Failed to load profile", err)
+    }
+  }
+
+  // DISPLAYS POSTS ON PROFILE
+  async loadPosts() {
+    try {
+    const postsUrl = this.apiUrl.replace('/users', '/posts');
+    const response: any = await lastValueFrom(
+      this.http.get(`${postsUrl}/user/${this.username}/`)
+    );
+    this.posts = response;
+    } catch (err) {
+      console.error('Failed to load posts', err);
     }
   }
 
@@ -109,6 +124,10 @@ export class ProfilePage implements OnInit {
   // View Following list
   onViewFollowing() {
     console.log("View following");
+  }
+
+  onPostClick(postId: number) {
+    this.router.navigate(['/post', postId]);
   }
 
 }

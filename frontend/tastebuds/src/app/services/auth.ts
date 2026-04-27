@@ -166,5 +166,48 @@ async resendVerificationEmail(email: string, password: string): Promise<void> {
     return this.currentUserSubject.getValue();
   }
 
+  // REFRESH TOKEN
+  async refreshToken(): Promise<string | null> { //async cuz it makes HTTP req, will everntuallt return string or nthn if fails
+    try {
+      const refreshToken = localStorage.getItem('refresh_token'); //gets refresh token from local storage
+      if (!refreshToken) return null; //if none then stops function
+
+      const response: any = await lastValueFrom(
+        this.http.post(`${this.apiUrl}/token/refresh/`, { //sends POST rew to Django's refresh token endpoint w/ refresh token, then django validates refresh token and returns new access token if valid
+          refresh: refreshToken
+        })
+      );
+
+      // Save new access token
+      localStorage.setItem('access_token', response.access);
+      return response.access; //returns new token so it can be used
+    } catch (err) {
+      // Refresh token expired — log user out
+      await this.logout();
+      return null;
+    }
+  }
+
+  // GET VALID TOKEN (refreshes if expired)
+  async getValidToken(): Promise<string | null> {
+    const token = this.getToken(); //gets current access token from local storage 
+    if (!token) return null;
+
+    try {
+      // Decode token and check expiry
+      const payload = JSON.parse(atob(token.split('.')[1])); //splits token by . , atob = decodes base64 string to readable text
+      const expiry = payload.exp * 1000; // convert expiry time to milliseconds
+      const now = Date.now(); //gets current time in milliseconds (used to compare against token's expiry date)
+
+      if (now >= expiry) { //if current time is past expire then token is expired
+        //Token expired — refresh it
+        return await this.refreshToken();
+      }
+      return token;
+    } catch {
+      return await this.refreshToken();
+    }
+  }
+
 }
 

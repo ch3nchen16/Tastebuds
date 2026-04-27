@@ -119,7 +119,7 @@ export class CreatePostPage implements OnInit {
   // CUSTOM DIET REQ 
   addCustomDietReq() {
     if (this.customDietReq.trim()) { //removes whitespace, returns empty string is blank
-      this.dietReq.push(this.customDietReq.trim());
+      this.dietReq.push(this.capitaliseFirst(this.customDietReq.trim()));
       this.customDietReq = "" //clears input field
     }
   }
@@ -136,7 +136,7 @@ export class CreatePostPage implements OnInit {
   // CUSTOM DINING TYPE
   addCustomDiningType() {
     if (this.customDiningType.trim()) {
-      this.diningType.push(this.customDiningType.trim());
+      this.diningType.push(this.capitaliseFirst(this.customDiningType.trim()));
       this.customDiningType = '';
     }
   }
@@ -153,7 +153,7 @@ export class CreatePostPage implements OnInit {
   // CUSTOM DIET OPTION
   addCustomDietOption() {
     if (this.customDietOption.trim()) {
-      this.dietOption.push(this.customDietOption.trim());
+      this.dietOption.push(this.capitaliseFirst(this.customDietOption.trim()));
       this.customDietOption = '';
     }
   }
@@ -260,9 +260,69 @@ export class CreatePostPage implements OnInit {
 
   // SUBMIT POST
   async onShare() {
-    this.isLoading = true;
     this.errorMessage = '';
 
+    // Media Validation
+    if (this.mediaFiles.length === 0) {
+    this.errorMessage = 'Please add at least one photo or video';
+    return;
+    }
+
+    // Recipe Validation
+    if (this.postType === 'recipe') {
+    if (!this.cookTime) {
+      this.errorMessage = 'Please enter cook time';
+      return;
+    }
+    if (!this.servingSize) {
+      this.errorMessage = 'Please enter serving size';
+      return;
+    }
+    // Check every ingredient has name, quantity and unit
+    const validIngredients = this.ingredients.filter(i => i.name.trim());
+    if (validIngredients.length === 0) {
+      this.errorMessage = 'Please add at least one ingredient';
+      return;
+    }
+    for (const ingredient of validIngredients) {
+      if (!ingredient.quantity) {
+        this.errorMessage = `Please enter quantity for ${ingredient.name}`;
+        return;
+      }
+      if (!ingredient.unit.trim()) {
+        this.errorMessage = `Please enter unit for ${ingredient.name}`;
+        return;
+      }
+    }
+    if (!this.instructions.some(s => s.trim())) {
+      this.errorMessage = 'Please add at least one instruction';
+      return;
+    }
+    
+  }
+
+  // Review Validation
+  if (this.postType === 'review') {
+    if (!this.restaurantName.trim()) {
+      this.errorMessage = 'Please enter restaurant name';
+      return;
+    }
+    if (!this.location.trim()) {
+      this.errorMessage = 'Please enter location';
+      return;
+    }
+    if (!this.price) {
+      this.errorMessage = 'Please select a price range';
+      return;
+    }
+    if (!this.rating) {
+      this.errorMessage = 'Please select a rating';
+      return;
+    }
+  }
+
+    // If all validation passed 
+    this.isLoading = true;
     try {
       const token = this.authService.getToken();
       const postsUrl = this.apiUrl.replace('/users', '/posts'); // replace /users with /posts 
@@ -306,12 +366,50 @@ export class CreatePostPage implements OnInit {
 
       this.isLoading = false;
       this.router.navigate(['/tabs/profile']);
+      this.clearFields();
 
     } catch (err: any) {
       this.isLoading = false;
       this.errorMessage = 'Failed to create post. Please try again.';
       console.error(err);
     }
+  }
+
+  clearFields(){
+    //shared fields
+    this.caption = "";
+    this.cuisineType = "";
+    this.mediaFiles = [];
+
+    //recipe fields
+    this.cookTime = null;
+    this.servingSize = null;
+    this.difficulty = "easy";
+    this.dietReq = [];
+    this.customDietReq = "";
+    this.ingredients = [{ name: "", quantity: "", unit: ""}];
+    this.instructions = ["", ""];
+
+    //review fields
+    this.restaurantName = "";
+    this.location = "";
+    this.price = "";
+    this.rating = 0;
+    this.diningType = [];
+    this.customDiningType = "";
+    this.dietOption = [];
+    this.customDietOption = "";
+
+  }
+
+  // Capitalise first letter of custom input
+  capitaliseFirst(value: string): string {
+    if (!value) return '';
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  trackByIndex(index: number): number { //used for *ngFor to track lust items by index
+    return index;
   }
 
   onCancel() {

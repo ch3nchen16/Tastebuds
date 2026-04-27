@@ -4,18 +4,18 @@
 
 .create-post-container {
   padding: 16px;           
-  display: flex;           //stacks vertically
+  display: flex;  //stacks vertically
   flex-direction: column;  //top to bottom layout
   gap: 16px;               
   max-width: 600px;        
-  margin: 0 auto;          //centres container on wide screens
+  margin: 0 auto; //centres container on wide screens
 
-  @media (min-width: 768px) {   //tablet
+  @media (min-width: 768px) {  //tablet
     padding: 24px;
     gap: 20px;
   }
 
-  @media (min-width: 1024px) {  //desktop
+  @media (min-width: 1024px) { //desktop
     padding: 32px;
     max-width: 700px;
     gap: 24px;
@@ -27,14 +27,14 @@ ion-toolbar {
 
   .cancel-btn {
     color: #E8475F;
-    font-size: 14px;           //mobile
+    font-size: 14px;  //mobile
 
     @media (min-width: 768px) {
-      font-size: 15px;         //tablet
+      font-size: 15px;         
     }
 
     @media (min-width: 1024px) {
-      font-size: 16px;         //desktop
+      font-size: 16px;        
     }
   }
 
@@ -555,6 +555,29 @@ ion-toolbar {
 
     @media (min-width: 1024px) {
       font-size: 15px;
+    }
+  }
+}
+
+.share-btn-container {
+  padding-bottom: 24px;
+  display: flex;
+  justify-content: center;
+
+  ion-button {
+    --background: #E8475F; /*tongue red*/
+    --border-radius: 8px;
+    --box-shadow: none; /*removes feault shadow*/
+    height: 48px;
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 8px; /*gap above btn*/
+    color: #ffffff; /*white text on button*/;
+    width: 500px;
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+      width: 550px;
     }
   }
 }

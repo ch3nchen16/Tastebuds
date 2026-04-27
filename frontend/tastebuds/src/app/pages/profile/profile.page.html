@@ -127,9 +127,34 @@
 
   <!-- Posts Grid -->
   <div class="posts-grid" *ngIf="posts.length > 0">
-    <!-- Only show grid if there are posts-->
-    <div class="post-item" *ngFor="let post of filteredPosts">
-      <img [src]="post.thumbnail" class="post-thumbnail" />
+    <div
+      class="post-item"
+      *ngFor="let post of filteredPosts"
+      (click)="onPostClick(post.id)"
+    >
+      <!-- Show image thumbnail -->
+      <img
+        *ngIf="post.media[0]?.media_type === 'image'"
+        [src]="post.media[0]?.media_url"
+        class="post-thumbnail"
+      />
+      <!-- Show video thumbnail -->
+      <video
+        *ngIf="post.media[0]?.media_type === 'video'"
+        [src]="post.media[0]?.media_url"
+        class="post-thumbnail"
+      ></video>
+      <!-- Video indicator icon -->
+      <div
+        class="video-indicator"
+        *ngIf="post.media[0]?.media_type === 'video'"
+      >
+        <ion-icon name="play-circle-outline"></ion-icon>
+      </div>
+      <!-- Multiple media indicator -->
+      <div class="multi-indicator" *ngIf="post.media.length > 1">
+        <ion-icon name="copy-outline"></ion-icon>
+      </div>
     </div>
   </div>
 

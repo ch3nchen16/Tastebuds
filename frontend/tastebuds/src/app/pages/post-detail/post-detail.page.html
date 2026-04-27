@@ -1,0 +1,197 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- BACK BTN -->
+      <ion-button (click)="onBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- shows recipe if recipe or review if post is review -->
+    <ion-title
+      >{{post?.post_type === 'recipe' ? 'Recipe' : 'Review'}}</ion-title
+    >
+
+    <!-- DELETE BTN (only shows if it is logged in user's post) -->
+    <ion-buttons slot="end" *ngIf="isOwnPost">
+      <ion-button (click)="onDelete()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="post-detail-content">
+  <!-- Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- POST CONTENT -->
+  <div class="post-container" *ngIf="!isLoading && post">
+    <!-- MEDIA CAROUSEL -->
+    <div class="media-container">
+      <div class="media-scroll">
+        <!-- scroll thru media -->
+        <div class="media-item" *ngFor="let media of post.media">
+          <img
+            *ngIf="media.media_type === 'image'"
+            [src]="media.media_url"
+            class="media-img"
+          />
+          <video
+            *ngIf="media.media_type === 'video'"
+            [src]="media.media_url"
+            controls
+            class="media-img"
+          ></video>
+        </div>
+      </div>
+
+      <!-- DOT INDICATORS FOR MULTIPLE MEDIAS -->
+      <div class="media-dots" *ngIf="post.media.length > 1">
+        <!-- loops thru each media file in post -->
+        <span class="dot" *ngFor="let media of post.media"></span>
+      </div>
+    </div>
+
+    <!-- POST HEADER -->
+    <div class="post-header">
+      <div class="user-info">
+        <!-- DISPLAYS PFP -->
+        <img
+          *ngIf="post.profile_picture"
+          [src]="post.profile_picture"
+          class="avatar"
+        />
+        <div *ngIf="!post.profile_picture" class="avatar-placeholder">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+        <div class="user-details">
+          <!-- DISPLAYS USERNAME + DATE CREATED -->
+          <span class="username">{{post.username}}</span>
+          <span class="post-date">{{post.created_at | date: 'MMM d, y'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="caption-container" *ngIf="post.caption">
+      <p class="caption">
+        <span class="caption-username">{{post.username}}</span> {{post.caption}}
+      </p>
+    </div>
+
+    <!-- CUISINE TYPE -->
+    <div class="cuisine-tag" *ngIf="post.cuisine_type">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <span>{{post.cuisine_type}}</span>
+    </div>
+
+    <!-- ===== RECIPE DETAILS ===== -->
+    <!-- only shows if post ype is recipe -->
+    <div
+      class="recipe-details"
+      *ngIf="post.post_type === 'recipe' && post.recipe"
+    >
+      <!-- Recipe Stats -->
+      <div class="recipe-stats">
+        <!-- COOK TIME -->
+        <div class="stat-item">
+          <ion-icon name="time-outline" class="stat-icon"></ion-icon>
+          <span class="stat-value">{{post.recipe.cook_time}} mins</span>
+          <span class="stat-label">Cook Time</span>
+        </div>
+
+        <!-- SERVINGS -->
+        <div class="stat-item">
+          <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+          <span class="stat-value">{{post.recipe.serving_size}}</span>
+          <span class="stat-label">Servings</span>
+        </div>
+
+        <!-- DIFFICULTY -->
+        <div class="stat-item">
+          <ion-icon name="speedometer-outline" class="stat-icon"></ion-icon>
+          <span class="stat-value">{{post.recipe.difficulty | titlecase}}</span>
+          <span class="stat-label">Difficulty</span>
+        </div>
+      </div>
+
+      <!-- DIETARY REQUIEREMENTS -->
+      <div class="tags-section" *ngIf="post.recipe.diet_req?.length > 0">
+        <div class="tag" *ngFor="let diet of post.recipe.diet_req">
+          {{diet}}
+        </div>
+      </div>
+
+      <!-- INGREDIENTS -->
+      <div class="section">
+        <h3 class="section-title">Ingredients</h3>
+        <div
+          class="ingredient-item"
+          *ngFor="let ing of post.recipe.ingredients"
+        >
+          <span class="ingredient-name">{{ing.ingredient_name}}</span>
+          <span class="ingredient-amount">{{ing.quantity}} {{ing.unit}}</span>
+        </div>
+      </div>
+
+      <!-- INSTRUCTIONS -->
+      <div class="section">
+        <h3 class="section-title">Instructions</h3>
+        <div
+          class="instruction-item"
+          *ngFor="let step of post.recipe.instructions.split('\n'); let i = index"
+        >
+          <div class="step-number">{{i + 1}}</div>
+          <p class="step-text">{{step}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== REVIEW DETAILS ===== -->
+    <div
+      class="review-details"
+      *ngIf="post.post_type === 'review' && post.review"
+    >
+      <!-- RESTAURANT INFO -->
+      <div class="restaurant-info">
+        <h2 class="restaurant-name">{{post.review.restaurant_name}}</h2>
+        <p class="restaurant-location">
+          <ion-icon name="location-outline"></ion-icon>
+          {{post.review.location}}
+        </p>
+        <p class="restaurant-price" *ngIf="post.review.price">
+          <ion-icon name="cash-outline"></ion-icon>
+          {{post.review.price}}
+        </p>
+      </div>
+
+      <!-- STAR RATING -->
+      <div class="star-rating">
+        <span
+          class="star"
+          *ngFor="let star of [1,2,3,4,5]"
+          [class.filled]="star <= post.review.rating"
+          >★</span
+        >
+        <span class="rating-number">{{post.review.rating}}/5</span>
+      </div>
+
+      <!-- DINING TYPE -->
+      <div class="tags-section" *ngIf="post.review.dining_type?.length > 0">
+        <div class="tag" *ngFor="let type of post.review.dining_type">
+          {{type}}
+        </div>
+      </div>
+
+      <!-- DIETARY OPTIONS -->
+      <div class="tags-section" *ngIf="post.review.diet_option?.length > 0">
+        <div class="tag" *ngFor="let diet of post.review.diet_option">
+          {{diet}}
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
