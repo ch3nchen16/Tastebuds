@@ -1,20 +1,170 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <div class="app-title">TasteBuds</div>
   </ion-toolbar>
+
+  <!-- Tabs -->
+  <div class="feed-tabs">
+    <div
+      class="feed-tab"
+      [class.active]="activeTab === 'foryou'"
+      (click)="setTab('foryou')"
+    >
+      For You
+    </div>
+    <div
+      class="feed-tab"
+      [class.active]="activeTab === 'tastebuds'"
+      (click)="setTab('tastebuds')"
+    >
+      TasteBuds
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div class="filter-bar">
+    <div class="filter-scroll">
+      <div
+        class="filter-pill"
+        [class.active]="activeFilter === 'all'"
+        (click)="setFilter('all')"
+      >
+        All
+      </div>
+      <div
+        class="filter-pill"
+        [class.active]="activeFilter === 'recipe'"
+        (click)="setFilter('recipe')"
+      >
+        Recipes
+      </div>
+      <div
+        class="filter-pill"
+        [class.active]="activeFilter === 'review'"
+        (click)="setFilter('review')"
+      >
+        Reviews
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="home-content">
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- Empty TasteBuds tab -->
+  <div
+    class="empty-state"
+    *ngIf="!isLoading && activeTab === 'tastebuds' && followingPosts.length === 0"
+  >
+    <p class="empty-title">No posts yet</p>
+    <p class="empty-subtitle">Follow some users to see their posts here!</p>
+  </div>
+
+  <!-- Posts Feed -->
+  <div class="feed-container" *ngIf="!isLoading && currentPosts.length > 0">
+    <div
+      class="post-card"
+      *ngFor="let post of currentPosts"
+      (click)="onPostClick(post.id)"
+    >
+      <!-- Media -->
+      <div class="card-media">
+        <img
+          *ngIf="post.media[0]?.media_type === 'image'"
+          [src]="post.media[0]?.media_url"
+          class="card-img"
+        />
+        <video
+          *ngIf="post.media[0]?.media_type === 'video'"
+          [src]="post.media[0]?.media_url"
+          class="card-img"
+        ></video>
+        <!-- Post type badge -->
+        <div
+          class="post-badge"
+          [class.recipe-badge]="post.post_type === 'recipe'"
+          [class.review-badge]="post.post_type === 'review'"
+        >
+          {{post.post_type === 'recipe' ? 'Recipe' : 'Review'}}
+        </div>
+        <!-- Multiple media indicator -->
+        <div class="multi-indicator" *ngIf="post.media.length > 1">
+          <ion-icon name="copy-outline"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Card Info -->
+      <div class="card-info">
+        <!-- User -->
+        <div
+          class="card-user"
+          (click)="$event.stopPropagation(); onUserClick(post.username)"
+        >
+          <img
+            *ngIf="post.profile_picture"
+            [src]="post.profile_picture"
+            class="card-avatar"
+          />
+          <div *ngIf="!post.profile_picture" class="card-avatar-placeholder">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </div>
+          <div class="card-user-details">
+            <span class="card-username">{{post.username}}</span>
+            <span class="card-date"
+              >{{post.created_at | date: 'MMM d, y'}}</span
+            >
+          </div>
+        </div>
+
+        <!-- Caption -->
+        <p class="card-caption" *ngIf="post.caption">{{post.caption}}</p>
+
+        <!-- Cuisine -->
+        <p class="card-cuisine" *ngIf="post.cuisine_type">
+          <ion-icon name="restaurant-outline" class="stat-icon"></ion-icon>
+          {{post.cuisine_type}}
+        </p>
+
+        <!-- Recipe meta -->
+        <div
+          class="card-meta"
+          *ngIf="post.post_type === 'recipe' && post.recipe"
+        >
+          <span class="meta-item">
+            <ion-icon name="time-outline" class="stat-icon"></ion-icon>
+            {{post.recipe.cook_time}} mins
+          </span>
+          <span class="meta-item">
+            <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+            {{post.recipe.serving_size}}
+          </span>
+          <span class="meta-item">{{post.recipe.difficulty | titlecase}}</span>
+        </div>
+
+        <!-- Review meta -->
+        <div
+          class="card-meta"
+          *ngIf="post.post_type === 'review' && post.review"
+        >
+          <span class="meta-item">
+            <ion-icon name="location-outline"></ion-icon>
+            {{post.review.location}}
+          </span>
+          <span class="meta-item">★ {{post.review.rating}}/5</span>
+          <span class="meta-item" *ngIf="post.review.price"
+            >{{post.review.price}}</span
+          >
+        </div>
+      </div>
+    </div>
   </div>
 </ion-content>

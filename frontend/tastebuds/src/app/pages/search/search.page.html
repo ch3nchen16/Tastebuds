@@ -8,7 +8,7 @@
   <!-- SEARCH BAR -->
   <div class="search-container">
     <ion-searchbar
-      placeholder="Search users or posts..."
+      placeholder="Search users, restaurants, recipes..."
       [(ngModel)]="searchQuery"
       (ionInput)="onSearch($event)"
       debounce="500"
@@ -24,47 +24,78 @@
   </div>
 
   <!-- SEARCH RESULTS -->
-  <div class="results-container" *ngIf="!isLoading && searchResults.length > 0">
-    <div
-      class="user-item"
-      *ngFor="let user of searchResults"
-      (click)="onUserClick(user.username)"
-    >
-      <!-- loops thru each user in searchResults -->
-
-      <!-- PROFILE PICTURE -->
-      <img
-        *ngIf="user.profile_picture"
-        [src]="user.profile_picture"
-        class="user-avatar"
-      />
-      <!-- shows default avatar if no pfp -->
-      <div *ngIf="!user.profile_picture" class="avatar-placeholder">
-        <ion-icon name="person-circle-outline"></ion-icon>
-      </div>
-
-      <!-- USER INFO -->
-      <div class="user-info">
-        <span class="user-username">{{user.username}}</span>
-        <span class="user-displayname" *ngIf="user.display_name"
-          >{{user.display_name}}</span
+  <div *ngIf="!isLoading && hasSearched">
+    <!-- Users Section -->
+    <div *ngIf="userResults.length > 0">
+      <div class="section-header">Users</div>
+      <div class="results-container">
+        <div
+          class="user-item"
+          *ngFor="let user of userResults"
+          (click)="onUserClick(user.username)"
         >
+          <img
+            *ngIf="user.profile_picture"
+            [src]="user.profile_picture"
+            class="user-avatar"
+          />
+          <div *ngIf="!user.profile_picture" class="avatar-placeholder">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </div>
+          <div class="user-info">
+            <span class="user-username">{{user.username}}</span>
+            <span class="user-displayname" *ngIf="user.display_name"
+              >{{user.display_name}}</span
+            >
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- No Results -->
-  <div
-    class="no-results"
-    *ngIf="!isLoading && hasSearched && searchResults.length === 0"
-  >
-    <ion-icon name="search-outline" class="no-results-icon"></ion-icon>
-    <p>No users found for "{{searchQuery}}"</p>
+    <!-- Posts Section -->
+    <div *ngIf="postResults.length > 0">
+      <div class="section-header">Posts</div>
+      <div class="posts-grid">
+        <div
+          class="post-item"
+          *ngFor="let post of postResults"
+          (click)="onPostClick(post.id)"
+        >
+          <img
+            *ngIf="post.media[0]?.media_type === 'image'"
+            [src]="post.media[0]?.media_url"
+            class="post-thumbnail"
+          />
+          <video
+            *ngIf="post.media[0]?.media_type === 'video'"
+            [src]="post.media[0]?.media_url"
+            class="post-thumbnail"
+          ></video>
+          <!-- Post type badge -->
+          <div
+            class="post-badge"
+            [class.recipe-badge]="post.post_type === 'recipe'"
+            [class.review-badge]="post.post_type === 'review'"
+          >
+            {{post.post_type === 'recipe' ? 'Recipe' : 'Review'}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div
+      class="no-results"
+      *ngIf="userResults.length === 0 && postResults.length === 0"
+    >
+      <ion-icon name="search-outline" class="no-results-icon"></ion-icon>
+      <p>No results found for "{{searchQuery}}"</p>
+    </div>
   </div>
 
   <!-- Initial State -->
   <div class="initial-state" *ngIf="!hasSearched && !isLoading">
     <ion-icon name="search-outline" class="initial-icon"></ion-icon>
-    <p>Search for users by username</p>
+    <p>Search for users, restaurants or recipes</p>
   </div>
 </ion-content>

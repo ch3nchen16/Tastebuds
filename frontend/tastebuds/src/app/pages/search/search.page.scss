@@ -56,6 +56,28 @@ ion-toolbar {
     }
 }
 
+/* SECTION HEADER */
+.section-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    padding: 12px 16px 4px; /*12px top, 16px sides, 4px bottom*/
+    text-transform: uppercase; /*converts users to USERS */
+    letter-spacing: 0.5px;
+
+    @media (min-width: 768px) {
+        font-size: 13px;
+        padding: 14px 20px 4px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+        font-size: 14px;
+        max-width: 700px;
+    }
+}
+
 /* RESULTS */
 .results-container {
     padding: 0 12px; /*padding left/right*/
@@ -189,6 +211,73 @@ ion-toolbar {
     }
 }
 
+/* POSTS GRID */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /*3 equal columns, 1fr = each one takes 1 fraction of width*/
+    gap: 2px;
+    margin-bottom: 16px;
+
+    @media (min-width: 768px) {
+        max-width: 600px;
+        margin: 0 auto 16px;
+        gap: 3px;
+    }
+
+    @media (min-width: 1024px) {
+        max-width: 700px;
+        gap: 3px;
+    }
+
+    .post-item {
+        aspect-ratio: 1; /*forces each grid cell to be square regardless of screen size*/
+        overflow: hidden; /*clips img */
+        position: relative; /*needed so the badge can be positioned inside it*/
+        cursor: pointer;
+        background: #f5f5f5;
+
+        &:active {
+            opacity: 0.8; /*slight fade when clicked*/
+        }
+
+        .post-thumbnail {
+            width: 100%; /*fills entire grid cell*/
+            height: 100%;
+            object-fit: cover; /*crops img to fill square w/o stretching*/
+            display: block; /*removes defualt small gap below imgs */
+        }
+
+        /* Small pill label on top of each post */
+        .post-badge {
+            position: absolute; /*floats on top of img*/
+            bottom: 6px; /*positioned at bottom left corner of image*/
+            left: 6px;
+            padding: 2px 8px;
+            border-radius: 20px; /*pill shape*/
+            font-size: 10px;
+            font-weight: 600;
+
+            @media (min-width: 768px) {
+                font-size: 11px;
+                padding: 3px 10px;
+                bottom: 8px;
+                left: 8px;
+            }
+
+            &.recipe-badge {  /*& = same element*/
+                background: rgba(232, 71, 95, 0.9);
+                color: #ffffff;
+            }
+
+            &.review-badge {
+                background: rgba(0, 0, 0, 0.6);
+                color: #ffffff;
+            }
+        }
+    }
+}
+
+
 /*  NO RESULTS*/
 .no-results {
     display: flex;
@@ -260,13 +349,11 @@ ion-toolbar {
         color: #dbdbdb;
 
         @media (min-width: 768px) {
-            padding: 60px 20px;   
-            gap: 12px;
+            font-size: 52px;
         }
 
         @media (min-width: 1024px) {
-            padding: 80px 24px;   
-            gap: 14px;
+            font-size: 60px;
         }
     }
 
@@ -275,11 +362,11 @@ ion-toolbar {
         margin: 0;
 
         @media (min-width: 768px) {
-            font-size: 52px;  
+            font-size: 14px;  
         }
 
         @media (min-width: 1024px) {
-            font-size: 60px;  
+            font-size: 15px;  
         }
     }
 }
