@@ -25,3 +25,32 @@ class Like(models.Model): # creates Like table in Postgresql
     # how a Like object appears in admin dashboard
     def __str__(self):
         return f"{self.user.username} liked post {self.post.id}"
+
+# COMMENT
+class Comment(models.Model): #creates Comment table in postgresql
+    #Links comment to post
+    post = models.ForeignKey('posts.Post', on_delete=models.CASCADE, related_name='comments') #post.comments.all() gets all comments
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField() #textfield cuz comments can be long
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at'] # - means descending order = newest comments first
+
+    def __str__(self):
+        return f"{self.user.username} commented on post {self.post.id}"
+
+
+# REPLY
+class Reply(models.Model): # Creates repy table in postgresql
+    #links reply to a comment,  on_delete=models.CASCADE means that if a comments is deleted then all its replies are deleted too
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies') 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='replies')
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at'] # no - cuz oldest replies first so conversation reads top to bottom
+
+    def __str__(self):
+        return f"{self.user.username} replied to comment {self.comment.id}"

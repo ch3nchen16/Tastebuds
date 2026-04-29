@@ -2,11 +2,12 @@ from rest_framework import status # http status codes
 from rest_framework.decorators import api_view, permission_classes 
 #api view = turns py function into REST API endpoint
 #permission classes = controls who can access endpoint
-from rest_framework.permissions import IsAuthenticated #only logged in users can access
+from rest_framework.permissions import IsAuthenticated, AllowAny #only logged in users can access
 from rest_framework.response import Response #converts py dictionaries to json to send to forntend
-from .models import Follow, Like #our follow model
+from .models import Follow, Like, Comment, Reply #our follow, like, comment, reply model
 from users.models import User #our user model to look up users by username
-from posts.models import Post
+from posts.models import Post #our Post model
+from .serializers import CommentSerializer, ReplySerializer
 
 # FOLLOW A USER
 @api_view(['POST'])
@@ -124,8 +125,12 @@ def get_following_posts(request):
 
 # LIKE A POST
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated]) 
+
+#function receives http request & post_id from url 
 def like_post(request, post_id):
+
+    #looks up post in DB by its ID
     try:
         post = Post.objects.get(id=post_id)
 
@@ -133,7 +138,9 @@ def like_post(request, post_id):
         if Like.objects.filter(user=request.user, post=post).exists():
             return Response({'error': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
 
-        Like.objects.create(user=request.user, post=post)
+        #creates new like record in DB linking user to post
+        Like.objects.create(user=request.user, post=post) # request.user is populated by django from token
+
         return Response({
             'message': 'Post liked',
             'likes_count': post.likes.count()
@@ -146,14 +153,17 @@ def like_post(request, post_id):
 # UNLIKE A POST
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
+#post id from url
 def unlike_post(request, post_id):
     try:
-        post = Post.objects.get(id=post_id)
-        like = Like.objects.filter(user=request.user, post=post).first()
+        #returns like record for this user &post
+        post = Post.objects.get(id=post_id) #looks up post w/ id
+        like = Like.objects.filter(user=request.user, post=post).first() #.first() returns object or none
 
         if not like:
             return Response({'error': 'You have not liked this post'}, status=status.HTTP_400_BAD_REQUEST)
 
+        #deletes like record from db
         like.delete()
         return Response({
             'message': 'Post unliked',
@@ -166,14 +176,124 @@ def unlike_post(request, post_id):
 # CHECK IF LIKED + GET LIKES COUNT
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+#post id from url
 def post_likes(request, post_id):
     try:
-        post = Post.objects.get(id=post_id)
-        is_liked = Like.objects.filter(user=request.user, post=post).exists()
+        post = Post.objects.get(id=post_id) #looks up post by id
+        #.exist() returs true or false , checks if user liked post 
+        is_liked = Like.objects.filter(user=request.user, post=post).exists() 
+
+        #returs both whether current user liked the post and total like count
         return Response({
-            'is_liked': is_liked,
+            'is_liked': is_liked, #like heart
             'likes_count': post.likes.count()
         })
 
     except Post.DoesNotExist:
         return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# GET COMMENTS FOR A POST
+@api_view(['GET'])
+@permission_classes([AllowAny]) #no need to be authenticated to see comments
+def get_comments(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        #gets all comments for this post, Comment model already orders by -created_at so newest first
+        comments = Comment.objects.filter(post=post)
+        #seria;izes all comments including nested replies (cuz ReplySerializer nested inside)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# ADD A COMMENT
+@api_view(['POST'])
+@permission_classes([IsAuthenticated]) #must be logged in
+def add_comment(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        # gets commetn text from request body that frontend sends. ex { "text": "looks delicious!" }
+        text = request.data.get('text')
+
+        # validate comment text
+        if not text or not text.strip(): #not text catches if text is None (not sent at all), text.strip() catches of it is just empty spaces " "
+            return Response({'error': 'Comment text is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # creates comment in the DB 
+        comment = Comment.objects.create(
+            post=post,
+            user=request.user, # gets logged in user form JWT token
+            text=text.strip() # removes any extra whitespace
+        )
+        # returns new created comment as JSON so frontend can display
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# DELETE A COMMENT
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated]) #must be logged in
+def delete_comment(request, comment_id):
+    try:
+        #looks for comment that matches both comment_id and belongs to logged in user
+        comment = Comment.objects.get(id=comment_id, user=request.user)
+        # user=request.user ensures only the comment owner can delete it
+        comment.delete()
+        return Response({'message': 'Comment deleted'})
+    #if you try to delete antoher user's commment it returns error
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comment not found or not authorised'}, status=status.HTTP_404_NOT_FOUND)
+
+# GET REPLIES FOR A COMMENT
+@api_view(['GET'])
+@permission_classes([AllowAny]) #no need to be authenticated
+def get_replies(request, comment_id):
+    try:
+        # looks up comment user is replying to, if doesnt exist returns 404
+        comment = Comment.objects.get(id=comment_id)
+        # gets all replies for this comment (no ordering needed cuz Reply model has ordering = ['created_at'])
+        replies = Reply.objects.filter(comment=comment)
+        serializer = ReplySerializer(replies, many=True)
+        return Response(serializer.data)
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# ADD A REPLY
+@api_view(['POST'])
+@permission_classes([IsAuthenticated]) #must be logged in user
+def add_reply(request, comment_id):
+    try:
+        # looks up comment user is trying to reply to
+        comment = Comment.objects.get(id=comment_id)
+        # gets rpley text from request body that frontend sends
+        text = request.data.get('text')
+
+        # validate reply text
+        if not text or not text.strip(): # if text is None, if it is just whitespace
+            return Response({'error': 'Reply text is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # creates reply linked to comment and logged in user
+        reply = Reply.objects.create(
+            comment=comment,
+            user=request.user,
+            text=text.strip()
+        )
+        serializer = ReplySerializer(reply)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# DELETE A REPLY
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated]) #must be logged in user
+def delete_reply(request, reply_id):
+    try:
+        reply = Reply.objects.get(id=reply_id, user=request.user)
+        # user=request.user ensures only the reply owner can delete it
+        reply.delete()
+        return Response({'message': 'Reply deleted'})
+    except Reply.DoesNotExist:
+        return Response({'error': 'Reply not found or not authorised'}, status=status.HTTP_404_NOT_FOUND)
