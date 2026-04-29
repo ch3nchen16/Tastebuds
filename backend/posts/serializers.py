@@ -46,7 +46,12 @@ class PostSerializer(serializers.ModelSerializer):
     review = ReviewSerializer(read_only=True) 
     username = serializers.CharField(source='user.username', read_only=True) # instead of returning user id it will return username instead followung FK to User model (Displays who made the post)
     profile_picture = serializers.CharField(source='user.profile_picture', read_only=True) #returns post's user pfp URL to display their avatar next to the post
+    likes_count = serializers.SerializerMethodField() # SerializerMethodField() used when value needs to be calculated. Looks for matho get_likes_count
 
-    class Meta:
+    class Meta: # defines everyhting frontend receives for a post all in one API call
         model = Post
-        fields = ['id', 'post_type', 'caption', 'cuisine_type', 'created_at', 'username', 'profile_picture', 'media', 'recipe', 'review']
+        fields = ['id', 'post_type', 'caption', 'cuisine_type', 'created_at', 'username', 'profile_picture', 'media', 'recipe', 'review', 'likes_count']
+
+    # obj = Post instance serialized
+    def get_likes_count(self, obj): #obj.likes uses related_name='likes' from Like model to access all likes
+        return obj.likes.count() #.count() runs SELECT COUNT SQL query

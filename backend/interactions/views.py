@@ -4,8 +4,9 @@ from rest_framework.decorators import api_view, permission_classes
 #permission classes = controls who can access endpoint
 from rest_framework.permissions import IsAuthenticated #only logged in users can access
 from rest_framework.response import Response #converts py dictionaries to json to send to forntend
-from .models import Follow #our follow model
+from .models import Follow, Like #our follow model
 from users.models import User #our user model to look up users by username
+from posts.models import Post
 
 # FOLLOW A USER
 @api_view(['POST'])
@@ -120,3 +121,59 @@ def get_following_posts(request):
     posts = Post.objects.filter(user__in=following_users).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+# LIKE A POST
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+
+        # Check if already liked
+        if Like.objects.filter(user=request.user, post=post).exists():
+            return Response({'error': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Like.objects.create(user=request.user, post=post)
+        return Response({
+            'message': 'Post liked',
+            'likes_count': post.likes.count()
+        }, status=status.HTTP_201_CREATED)
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# UNLIKE A POST
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def unlike_post(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        like = Like.objects.filter(user=request.user, post=post).first()
+
+        if not like:
+            return Response({'error': 'You have not liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+
+        like.delete()
+        return Response({
+            'message': 'Post unliked',
+            'likes_count': post.likes.count()
+        })
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# CHECK IF LIKED + GET LIKES COUNT
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def post_likes(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        is_liked = Like.objects.filter(user=request.user, post=post).exists()
+        return Response({
+            'is_liked': is_liked,
+            'likes_count': post.likes.count()
+        })
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -1,11 +1,10 @@
-from django.urls import path
-from . import views
+from django.contrib import admin #django's built in admin module for registering models
+from .models import Follow, Like #our Follow and Like models
 
-urlpatterns = [
-    path('follow/<str:username>/', views.follow_user, name='follow_user'),
-    path('unfollow/<str:username>/', views.unfollow_user, name='unfollow_user'),
-    path('is-following/<str:username>/', views.is_following, name='is_following'),
-    path('followers/<str:username>/', views.get_followers, name='get_followers'),
-    path('following/<str:username>/', views.get_following, name='get_following'),
-    path('following-posts/', views.get_following_posts, name='get_following_posts'),
-]
+@admin.register(Follow) #decorator that registers Follow model w/ admin site
+class FollowAdmin(admin.ModelAdmin): #FollowAdmin class customises how Follow table looks in admin dashboard, admin.ModelAdmin gives all defauult admin functionality
+    list_display = ['follower', 'following', 'created_at'] # what appears on dashboard
+
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post', 'created_at']

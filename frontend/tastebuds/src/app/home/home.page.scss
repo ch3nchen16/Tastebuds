@@ -305,10 +305,11 @@ ion-toolbar {
 }
 
 .card-meta {
-  display: flex;
+  display: flex; /*Puts items side by side */
   flex-wrap: wrap;
   gap: 6px;
 
+  /*grey pilll with cook time, servings, etc..*/
   .meta-item {
     font-size: 11px;
     color: #666;
