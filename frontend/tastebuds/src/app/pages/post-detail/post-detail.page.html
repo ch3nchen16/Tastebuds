@@ -207,4 +207,166 @@
       </div>
     </div>
   </div>
+  <!-- COMMENTS SECTION -->
+  <div class="comments-section">
+    <h3 class="comments-title">Comments</h3>
+
+    <!-- ADD COMMENT INPUT -->
+    <div class="add-comment-container">
+      <ion-input
+        fill="outline"
+        placeholder="Add a comment..."
+        [(ngModel)]="newComment"
+        class="comment-input"
+      ></ion-input>
+      <ion-button
+        fill="clear"
+        (click)="onAddComment()"
+        [disabled]="isPostingComment || !newComment.trim()"
+      >
+        <!-- btn is disabled if comment is currently posting or input is empty -->
+        <ion-spinner *ngIf="isPostingComment" name="crescent"></ion-spinner>
+        <!-- spinner if posting -->
+        <ion-icon *ngIf="!isPostingComment" name="send-outline"></ion-icon>
+        <!-- send icon if not -->
+      </ion-button>
+    </div>
+
+    <!-- LOADING COMMENTS SPINNER -->
+    <div class="loading-container" *ngIf="isLoadingComments">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <!-- COMMENTS LIST -->
+    <div class="comments-list" *ngIf="!isLoadingComments">
+      <!-- NO COMMENTS -->
+      <p class="no-comments" *ngIf="comments.length === 0">
+        No comments yet. Be the first!
+      </p>
+
+      <!-- EACH COMMENT -->
+      <div class="comment-item" *ngFor="let comment of comments">
+        <!-- loops thru each comment in comments array -->
+
+        <!-- COMMENT HEADER -->
+        <div class="comment-header">
+          <!-- PROFILE PICTURE -->
+          <img
+            *ngIf="comment.profile_picture"
+            [src]="comment.profile_picture"
+            class="comment-avatar"
+          />
+          <!-- default avatar if no pfp -->
+          <div
+            *ngIf="!comment.profile_picture"
+            class="comment-avatar-placeholder"
+          >
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </div>
+
+          <!-- USERNAME + TEXT -->
+          <div class="comment-content">
+            <span class="comment-username">{{comment.username}}</span>
+            <p class="comment-text">{{comment.text}}</p>
+            <span class="comment-date"
+              >{{comment.created_at | date: 'MMM d, y'}}</span
+            >
+            <!-- Angu.lar pipe formatted date -->
+          </div>
+
+          <!-- DELETE BUTTON (only own comments) -->
+          <ion-button
+            fill="clear"
+            class="delete-btn"
+            *ngIf="isOwnComment(comment.username)"
+            (click)="onDeleteComment(comment.id)"
+          >
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- REPLIES TOGGLE -->
+        <div class="replies-toggle" (click)="toggleReplies(comment.id)">
+          <span *ngIf="comment.replies_count > 0">
+            <!-- only shows view replies btn if there are replies -->
+            <!-- icon and text changes depending on whether replies is expanded -->
+            <ion-icon
+              [name]="isRepliesExpanded(comment.id) ? 'chevron-up-outline' : 'chevron-down-outline'"
+            ></ion-icon>
+            <!-- hide or view, reply or replies -->
+            {{isRepliesExpanded(comment.id) ? 'Hide' : 'View'}}
+            {{comment.replies_count}} {{comment.replies_count === 1 ? 'reply' :
+            'replies'}}
+          </span>
+          <!-- (click)="$event.stopPropagation(); if Reply is clicked then toggleReplies() would be called twice, it stops the click event from travelling up to parent div -->
+          <span
+            class="reply-link"
+            (click)="$event.stopPropagation(); toggleReplies(comment.id)"
+            >Reply</span
+          >
+        </div>
+
+        <!-- REPLIES SECTION -->
+        <!-- only shows if isRepliesExpanded is true -->
+        <div class="replies-section" *ngIf="isRepliesExpanded(comment.id)">
+          <!-- EACH REPLY -->
+          <!-- loops thru each reply in the comment's replies array -->
+          <div class="reply-item" *ngFor="let reply of comment.replies">
+            <img
+              *ngIf="reply.profile_picture"
+              [src]="reply.profile_picture"
+              class="reply-avatar"
+            />
+            <div
+              *ngIf="!reply.profile_picture"
+              class="reply-avatar-placeholder"
+            >
+              <ion-icon name="person-circle-outline"></ion-icon>
+            </div>
+            <div class="reply-content">
+              <span class="reply-username">{{reply.username}}</span>
+              <p class="reply-text">{{reply.text}}</p>
+              <span class="reply-date"
+                >{{reply.created_at | date: 'MMM d, y'}}</span
+              >
+            </div>
+
+            <!-- DELETE REPLY BUTTON (only own replies) -->
+            <ion-button
+              fill="clear"
+              class="delete-btn"
+              *ngIf="isOwnComment(reply.username)"
+              (click)="onDeleteReply(comment.id, reply.id)"
+            >
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- ADD REPLY INPUT -->
+          <div class="add-reply-container">
+            <ion-input
+              fill="outline"
+              placeholder="Add a reply..."
+              [(ngModel)]="replyText[comment.id]"
+              class="reply-input"
+            ></ion-input>
+            <ion-button
+              fill="clear"
+              (click)="onAddReply(comment.id)"
+              [disabled]="isPostingReply[comment.id] || !replyText[comment.id]?.trim()"
+            >
+              <ion-spinner
+                *ngIf="isPostingReply[comment.id]"
+                name="crescent"
+              ></ion-spinner>
+              <ion-icon
+                *ngIf="!isPostingReply[comment.id]"
+                name="send-outline"
+              ></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -4,14 +4,15 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router'; //activa
 import { HttpClient } from '@angular/common/http'; // for api reqs
 import { lastValueFrom } from 'rxjs'; //converts observable to promise
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline} from 'ionicons/icons';
+import { arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline} from 'ionicons/icons';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle,
-  IonButtons, IonButton, IonIcon, IonSpinner
+  IonButtons, IonButton, IonIcon, IonSpinner, IonInput
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth'; 
 import { environment } from '../../../environments/environment';
 import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-post-detail',
@@ -21,7 +22,8 @@ import { Location } from '@angular/common';
   imports: [
     CommonModule, RouterModule,
     IonContent, IonHeader, IonToolbar, IonTitle,
-    IonButtons, IonButton, IonIcon, IonSpinner
+    IonButtons, IonButton, IonIcon, IonSpinner, 
+    IonInput, FormsModule
   ]
 })
 export class PostDetailPage implements OnInit {
@@ -31,10 +33,22 @@ export class PostDetailPage implements OnInit {
   isOwnPost = false; //true if this is the logged in user's post so we can hide delete btn
   postId: number = 0; //stores post ID from URL, starts as 0 but sets in ngOnInit()
 
-  // LIKE VARIABLES
+  // LIKE STATE VARIABLES/PROPERTIES
   isLiked = false; //true if logged in user has liked this post
   likesCount = 0; //total number of likes
   isLiking = false; //prevents double tapping
+
+  // COMMENT STATE VARIABLES/PROPERTIES
+  comments: any[] = []; // array that stores all comments
+  newComment = ''; // what user is typing [[(ngModel)] bound to input so updates as user types
+  isPostingComment = false; // spinner while posting
+  isLoadingComments = false; // spinner while loading comments
+  // tracks which comments have replies visible
+  expandedReplies: Set<number> = new Set(); // Set is like an array but only stores unique values, stores comment ids that have replies visible  ex comment 5 and 3 have replies visible then this set contains {3, 5}
+  // stores reply text for each comment by comment id
+  replyText: { [key: number]: string } = {}; // dictionary stores reply text for each comment separately using comment id as a key ex reply to comment 3, it stores { 3: "your reply text" }
+  // tracks posting state per comment
+  isPostingReply: { [key: number]: boolean } = {}; // ex if you're replying to comment 3 { 3: true }
 
   private apiUrl = environment.apiUrl; //from env file
   private interactionsUrl = environment.apiUrl.replace('/users', '/interactions'); //base url pointing to users app replace usrs part of url w/ interactions
@@ -46,7 +60,7 @@ export class PostDetailPage implements OnInit {
     private authService: AuthService,
     private location: Location //so we can go backt to previous page
   ) {
-    addIcons({ arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline });
+    addIcons({ arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline });
   }
 
   // GETS POST ID FROM URL
@@ -76,6 +90,7 @@ export class PostDetailPage implements OnInit {
 
       // When post loads check if current user likes it so heart shows correct state
       await this.loadLikeStatus(); 
+      await this.loadComments();
 
       this.isLoading = false;
     } catch (err) {
@@ -148,6 +163,155 @@ export class PostDetailPage implements OnInit {
     } finally { //finally runs whether api call succeeds or fails
       this.isLiking = false; //releases the lock, always re-enables liking even if error
     }
+  }
+
+  // LOAD COMMENTS
+  async loadComments() {
+    try {
+      // showz spinner
+      this.isLoadingComments = true;
+
+      // sends GET to ex /api/interactions/comments/5/, django returns all comments w/ nested replies
+      const response: any = await lastValueFrom( 
+        this.http.get(`${this.interactionsUrl}/comments/${this.postId}/`)
+      );
+      // stores full list of comments so HTML can loop thru and display them
+      this.comments = response;
+      // hides spinner
+      this.isLoadingComments = false; 
+    } catch (err) {
+      console.error('Failed to load comments', err);
+      this.isLoadingComments = false;
+    }
+  }
+
+  // ADD COMMENT
+  async onAddComment() {
+    // ignores req if input empty or just spaces
+    if (!this.newComment.trim()) return; 
+    // shows spinner
+    this.isPostingComment = true;
+
+    try {
+      const token = await this.authService.getValidToken();
+      const response: any = await lastValueFrom(
+        // POST /api/interactions/comments/5/add/
+        this.http.post(`${this.interactionsUrl}/comments/${this.postId}/add/`,
+          { text: this.newComment.trim() },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      );
+      // adds new comment to top of list
+      this.comments.unshift(response); 
+      // clears input
+      this.newComment = ''; 
+      //hides spinner
+      this.isPostingComment = false;
+    } catch (err) {
+      console.error('Failed to add comment', err);
+      this.isPostingComment = false;
+    }
+  }
+
+  // DELETE COMMENT
+  async onDeleteComment(commentId: number) {
+    try {
+      const token = await this.authService.getValidToken();
+      await lastValueFrom(
+        // DELETE /api/interactions/comments/5/delete/
+        this.http.delete(`${this.interactionsUrl}/comments/${commentId}/delete/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      );
+      // removes comment from list without reloading all comments
+      this.comments = this.comments.filter(c => c.id !== commentId); // filter creates new array that keeps only comments whose id doesnt match deleted one
+    } catch (err) {
+      console.error('Failed to delete comment', err);
+    }
+  }
+
+  // TOGGLE REPLIES VISIBILITY
+  toggleReplies(commentId: number) {
+    // checks if comment id is already in expandedReplies set
+    if (this.expandedReplies.has(commentId)) {
+      this.expandedReplies.delete(commentId); // if yes hide replies
+    } else {
+      this.expandedReplies.add(commentId); // if no, show replies
+    }
+  }
+
+  // CHECK IF REPLIES ARE VISIBLE
+  isRepliesExpanded(commentId: number): boolean {
+    //checks if comment id is in expandedReplies set and returns true or false
+    return this.expandedReplies.has(commentId); // HTML uses this to decide whether to show replies
+  }
+
+  // ADD REPLY
+  async onAddReply(commentId: number) {
+    // gets reply text for this specific comment
+    const text = this.replyText[commentId]; 
+    // validates if text is none or just whitespace
+    if (!text || !text.trim()) return;
+    // shows spinner
+    this.isPostingReply[commentId] = true;
+
+    try {
+      const token = await this.authService.getValidToken();
+      const response: any = await lastValueFrom(
+
+        // POST /api/interactions/comments/5/replies/add/
+        this.http.post(`${this.interactionsUrl}/comments/${commentId}/replies/add/`,
+          { text: text.trim() },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      );
+
+      // find searches the comments array for comment w/ this id 
+      const comment = this.comments.find(c => c.id === commentId);
+      if (comment) {
+        // adds reply to bottom of replies list and increments count
+        comment.replies.push(response); 
+        comment.replies_count++;
+      }
+
+      // clears reply input for this comment
+      this.replyText[commentId] = ''; 
+      this.isPostingReply[commentId] = false;
+      // makes sure replies are visible after posting
+      this.expandedReplies.add(commentId); 
+    } catch (err) {
+      console.error('Failed to add reply', err);
+      this.isPostingReply[commentId] = false;
+    }
+  }
+
+  // DELETE REPLY
+  async onDeleteReply(commentId: number, replyId: number) {
+    try {
+      const token = await this.authService.getValidToken();
+      await lastValueFrom(
+        // DELETE /api/interactions/comments/replies/3/delete/
+        this.http.delete(`${this.interactionsUrl}/comments/replies/${replyId}/delete/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      );
+
+      // finds comment
+      const comment = this.comments.find(c => c.id === commentId);
+      if (comment) {
+        // filters out deleted reply from replies array
+        comment.replies = comment.replies.filter((r: any) => r.id !== replyId);
+        comment.replies_count--;
+      }
+    } catch (err) {
+      console.error('Failed to delete reply', err);
+    }
+  }
+
+  // CHECK IF COMMENT BELONGS TO LOGGED IN USER
+  isOwnComment(username: string): boolean { 
+    // compares user's username w/ comment's username
+    return this.authService.getCurrentUser()?.username === username;
   }
 
   // DELETE POST

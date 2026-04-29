@@ -248,7 +248,8 @@ ion-toolbar {
 
   ion-input, ion-textarea {
     --border-radius: 8px;
-    font-size: 14px;      
+    font-size: 14px;    
+    --padding-start: 10px;  
 
     @media (min-width: 768px) {
       font-size: 15px;

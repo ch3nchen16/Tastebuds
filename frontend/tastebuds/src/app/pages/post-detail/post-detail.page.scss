@@ -712,7 +712,7 @@ ion-toolbar {
         color: #888;
 
         &.liked {
-        color: red;
+        color: #E8475F;
         }
 
         @media (min-width: 768px) {
@@ -725,3 +725,406 @@ ion-toolbar {
 
     }
 }
+
+/// COMMENTS SECTION
+.comments-section {
+    padding: 16px;
+
+    @media (min-width: 768px) {
+        padding: 24px; 
+    }
+
+    @media (min-width: 1024px) {
+        padding: 32px; 
+    }
+
+    .comments-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+
+        @media (min-width: 768px) {
+            font-size: 18px; 
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 20px; 
+        }
+    }
+
+    // ADD COMMENT INPUT
+    .add-comment-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+
+        @media (min-width: 768px) {
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+
+        @media (min-width: 1024px) {
+            gap: 16px; 
+            margin-bottom: 24px; 
+        }
+
+        .comment-input {
+            flex: 1;
+            --padding-start: 10px;
+        }
+
+        ion-button {
+            color: #E8475F;
+        }
+    }
+
+    // COMMENTS LIST
+    .comment-item {
+        margin-bottom: 16px;
+        border-bottom: 1px solid #f4f5f8;
+        padding-bottom: 12px;
+
+        @media (min-width: 768px) {
+            margin-bottom: 20px; 
+            padding-bottom: 16px; 
+        }
+
+        @media (min-width: 1024px) {
+            margin-bottom: 24px; 
+            padding-bottom: 20px; 
+        }
+
+        // COMMENT HEADER
+        .comment-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+
+            @media (min-width: 768px) { 
+                gap: 12px; 
+            }
+
+            @media (min-width: 1024px) { 
+                gap: 16px; 
+            }
+
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                object-fit: cover;
+
+                @media (min-width: 768px) { 
+                    width: 40px; 
+                    height: 40px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    width: 44px; 
+                    height: 44px; 
+                }
+            }
+
+            .comment-avatar-placeholder {
+                width: 32px;
+                height: 32px;
+
+                @media (min-width: 768px) { 
+                    width: 40px; 
+                    height: 40px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    width: 44px; 
+                    height: 44px; 
+                }
+
+                ion-icon {
+                    font-size: 32px;
+                    color: #888;
+
+                    @media (min-width: 768px) { 
+                        font-size: 40px; 
+                    }
+
+                    @media (min-width: 1024px) { 
+                        font-size: 44px; 
+                    }
+                }
+            }
+
+            .comment-content {
+                flex: 1;
+
+                .comment-username {
+                    font-weight: 600;
+                    font-size: 13px;
+
+                    @media (min-width: 768px) { 
+                        font-size: 14px;
+                    }
+
+                    @media (min-width: 1024px) { 
+                        font-size: 15px; 
+                    }
+                }
+
+                .comment-text {
+                    font-size: 13px;
+                    margin: 2px 0;
+
+                    @media (min-width: 768px) { 
+                        font-size: 14px; 
+                    }
+                    
+                    @media (min-width: 1024px) { 
+                        font-size: 15px; 
+                    }
+                }
+
+                .comment-date {
+                    font-size: 11px;
+                    color: var(--ion-color-medium);
+
+                    @media (min-width: 768px) { 
+                        font-size: 12px; 
+                    }
+                    
+                    @media (min-width: 1024px) { 
+                        font-size: 13px; 
+                    }
+                }
+            } 
+
+            .delete-btn {
+                --padding-start: 0;
+                --padding-end: 0;
+                height: 24px;
+                color: var(--ion-color-medium);
+
+                @media (min-width: 768px) { 
+                    height: 28px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    height: 32px; 
+                }
+            }
+        } 
+
+        // REPLIES TOGGLE
+        .replies-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-left: 40px;
+            font-size: 12px;
+            color: #E8475F;
+            cursor: pointer;
+
+            @media (min-width: 768px) { 
+                padding-left: 52px; 
+                font-size: 13px; 
+            }
+
+            @media (min-width: 1024px) { 
+                padding-left: 60px; 
+                font-size: 14px; 
+            }
+
+            ion-icon {
+                font-size: 12px;
+                vertical-align: middle;
+                margin-right: 2px;
+
+                @media (min-width: 768px) { 
+                    font-size: 13px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    font-size: 14px; 
+                }
+            }
+
+            .reply-link {
+                color: #888;
+                font-size: 12px;
+
+                @media (min-width: 768px) { 
+                    font-size: 13px; 
+                }
+                
+                @media (min-width: 1024px) { 
+                    font-size: 14px; 
+                }
+            }
+        } 
+
+        // REPLIES SECTION
+        .replies-section {
+            margin-top: 8px;
+            padding-left: 40px;
+
+            @media (min-width: 768px) { 
+                padding-left: 52px; 
+                margin-top: 10px; 
+            }
+
+            @media (min-width: 1024px) { 
+                padding-left: 60px; 
+                margin-top: 12px; 
+            }
+
+            .reply-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 10px;
+
+                @media (min-width: 768px) { 
+                    gap: 12px; 
+                    margin-bottom: 12px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    gap: 16px; 
+                    margin-bottom: 14px; 
+                }
+
+                .reply-avatar {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    object-fit: cover;
+
+                    @media (min-width: 768px) { 
+                        width: 32px; 
+                        height: 32px; 
+                    }
+
+                    @media (min-width: 1024px) { 
+                        width: 36px; 
+                        height: 36px; 
+                    }
+                }
+
+                .reply-avatar-placeholder {
+                    width: 24px;
+                    height: 24px;
+
+                    @media (min-width: 768px) { 
+                        width: 32px; 
+                        height: 32px; 
+                    }
+
+                    @media (min-width: 1024px) { 
+                        width: 36px; 
+                        height: 36px; 
+                    }
+
+                    ion-icon {
+                        font-size: 24px;
+                        color: #888;
+
+                        @media (min-width: 768px) { 
+                            font-size: 32px; 
+                        }
+
+                        @media (min-width: 1024px) { 
+                            font-size: 36px; 
+                        }
+                    }
+                }
+
+                .reply-content {
+                    flex: 1;
+
+                    .reply-username {
+                        font-weight: 600;
+                        font-size: 12px;
+
+                        @media (min-width: 768px) { 
+                            font-size: 13px; 
+                        }
+
+                        @media (min-width: 1024px) { 
+                            font-size: 14px; 
+                        }
+                    }
+
+                    .reply-text {
+                        font-size: 12px;
+                        margin: 2px 0;
+
+                        @media (min-width: 768px) { 
+                            font-size: 13px; 
+                        }
+
+                        @media (min-width: 1024px) { 
+                            font-size: 14px; 
+                        }
+                    }
+
+                    .reply-date {
+                        font-size: 11px;
+                        color: #888;
+
+                        @media (min-width: 768px) { 
+                            font-size: 12px; 
+                        }
+
+                        @media (min-width: 1024px) { 
+                            font-size: 13px; 
+                        }
+                    }
+                } 
+
+                .delete-btn {
+                    --padding-start: 0;
+                    --padding-end: 0;
+                    height: 24px;
+                    color: #888;
+
+                    @media (min-width: 768px) { 
+                        height: 28px; 
+                    }
+
+                    @media (min-width: 1024px) { 
+                        height: 32px; 
+                    }
+                }
+            } 
+
+            // ADD REPLY INPUT
+            .add-reply-container {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 8px;
+
+                @media (min-width: 768px) { 
+                    gap: 12px; 
+                    margin-top: 10px; 
+                }
+
+                @media (min-width: 1024px) { 
+                    gap: 16px; 
+                    margin-top: 12px; 
+                }
+
+                .reply-input {
+                    flex: 1;
+                    --padding-start: 10px;
+                }
+
+                ion-button {
+                    color: #E8475F;
+                }
+            } 
+        } 
+
+    } 
+
+} 
