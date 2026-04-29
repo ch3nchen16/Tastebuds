@@ -88,6 +88,19 @@
       <span>{{post.cuisine_type}}</span>
     </div>
 
+    <!-- LIKE BUTTON -->
+    <div class="like-container">
+      <ion-button fill="clear" (click)="onToggleLike()" [disabled]="isLiking">
+        <!-- shows filled heart if liked, empty heart if not -->
+        <ion-icon
+          [name]="isLiked ? 'heart' : 'heart-outline'"
+          [class.liked]="isLiked"
+          slot="icon-only"
+        ></ion-icon>
+      </ion-button>
+      <span class="likes-count">{{likesCount}}</span>
+    </div>
+
     <!-- ===== RECIPE DETAILS ===== -->
     <!-- only shows if post ype is recipe -->
     <div

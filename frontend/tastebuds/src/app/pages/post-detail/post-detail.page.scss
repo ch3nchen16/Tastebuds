@@ -679,3 +679,49 @@ ion-toolbar {
         }
     }
 }
+
+/* LIKE */
+.like-container {
+    display: flex; /*heart btn and like count side by side*/
+    align-items: center;
+    padding: 0 16px;
+
+    @media (min-width: 768px) {
+        padding: 0 24px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 32px;
+    }
+
+    .likes-count {
+        font-size: 14px;
+        color: #888;
+
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
+    }
+
+    ion-icon {
+        font-size: 24px;
+        color: #888;
+
+        &.liked {
+        color: red;
+        }
+
+        @media (min-width: 768px) {
+            font-size: 28px;
+        }
+
+        @media (min-width: 1024px) {
+            font-size: 32px;
+        }
+
+    }
+}
