@@ -27,5 +27,9 @@ urlpatterns = [
     path('notifications/', views.get_notifications, name='get_notifications'), # GET
     path('notifications/read/', views.mark_notifications_read, name='mark_notifications_read'), # PUT
     path('notifications/unread-count/', views.unread_notifications_count, name='unread_notifications_count'), # GET
-
+    # SAVED POSTS
+    path('save/<int:post_id>/', views.save_post, name='save_post'),
+    path('unsave/<int:post_id>/', views.unsave_post, name='unsave_post'),
+    path('is-saved/<int:post_id>/', views.is_saved, name='is_saved'),
+    path('saved-posts/', views.get_saved_posts, name='get_saved_posts'),
 ]

@@ -88,3 +88,21 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.sender.username} {self.notification_type} -> {self.recipient.username}"
+    
+# SAVED POST
+class SavedPost(models.Model):
+    # user who saved the post
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_posts')
+    # post that was saved
+    post = models.ForeignKey('posts.Post', on_delete=models.CASCADE, related_name='saved_by')
+    # timestamp when post was saved
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # prevents saving the same post twice
+        unique_together = ('user', 'post') 
+        # newest saved posts first
+        ordering = ['-created_at'] 
+
+    def __str__(self):
+        return f"{self.user.username} saved post {self.post.id}"

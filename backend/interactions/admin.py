@@ -1,5 +1,5 @@
 from django.contrib import admin #django's built in admin module for registering models
-from .models import Follow, Like, Comment, Reply, Notification #our Follow, Like, Reply, Comment models
+from .models import Follow, Like, Comment, Reply, Notification, SavedPost #our Follow, Like, Reply, Comment models
 
 # REGISTERS FOLLOW MODEL
 @admin.register(Follow) #decorator that registers Follow model w/ admin site
@@ -24,3 +24,7 @@ class ReplyAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['sender', 'recipient', 'notification_type', 'post', 'is_read', 'created_at']
+
+@admin.register(SavedPost)
+class SavedPostAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post', 'created_at']

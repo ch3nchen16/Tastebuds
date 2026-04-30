@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 #permission classes = controls who can access endpoint
 from rest_framework.permissions import IsAuthenticated, AllowAny #only logged in users can access
 from rest_framework.response import Response #converts py dictionaries to json to send to forntend
-from .models import Follow, Like, Comment, Reply, Notification #our follow, like, comment, reply model
+from .models import Follow, Like, Comment, Reply, Notification, SavedPost #our follow, like, comment, reply model
 from users.models import User #our user model to look up users by username
 from posts.models import Post #our Post model
 from .serializers import CommentSerializer, ReplySerializer, NotificationSerializer
@@ -428,3 +428,71 @@ def unread_notifications_count(request):
         is_read=False
     ).count()
     return Response({'unread_count': count})
+
+# SAVE A POST
+@api_view(['POST'])
+# must be logged in user to save post
+@permission_classes([IsAuthenticated])
+def save_post(request, post_id):
+    try:
+        #post_id comes from url
+        post = Post.objects.get(id=post_id)
+
+        # looks up post by id 
+        # check if already saved
+        if SavedPost.objects.filter(user=request.user, post=post).exists():
+            return Response({'error': 'Post already saved'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # creates new SavedPost record linking user to post
+        SavedPost.objects.create(user=request.user, post=post)
+        return Response({'message': 'Post saved'}, status=status.HTTP_201_CREATED)
+
+    # if post doesnt exist 
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# UNSAVE A POST
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def unsave_post(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id) # first() = return first matching object from DB query
+        saved = SavedPost.objects.filter(user=request.user, post=post).first() # returns None if not found
+
+        if not saved:
+            return Response({'error': 'Post not saved'}, status=status.HTTP_400_BAD_REQUEST)
+
+        saved.delete()
+        return Response({'message': 'Post unsaved'})
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# CHECK IF SAVED
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def is_saved(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        saved = SavedPost.objects.filter(user=request.user, post=post).exists()
+        return Response({'is_saved': saved})
+
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# GET ALL SAVED POSTS
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_saved_posts(request):
+    # select_related('post') fetches the post data in the same query instead of making a separate query for each post
+    saved = SavedPost.objects.filter(user=request.user).select_related('post')
+    
+    from posts.serializers import PostSerializer
+    # extracts post objects from saved records
+    # list comprehension loops thru each saved record & extracts just post object from it 
+    posts = [s.post for s in saved]  # we get a list og Post objects that PostSetializer can serialize
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
