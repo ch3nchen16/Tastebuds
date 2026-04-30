@@ -69,7 +69,9 @@
         </div>
         <div class="user-details">
           <!-- DISPLAYS USERNAME + DATE CREATED -->
-          <span class="username">{{post.username}}</span>
+          <span class="username" (click)="onUsernameClick(post.username)"
+            >{{post.username}}</span
+          >
           <span class="post-date">{{post.created_at | date: 'MMM d, y'}}</span>
         </div>
       </div>
@@ -245,7 +247,11 @@
       </p>
 
       <!-- EACH COMMENT -->
-      <div class="comment-item" *ngFor="let comment of comments">
+      <div
+        class="comment-item"
+        *ngFor="let comment of comments"
+        [id]="'comment-' + comment.id"
+      >
         <!-- loops thru each comment in comments array -->
 
         <!-- COMMENT HEADER -->
@@ -266,7 +272,11 @@
 
           <!-- USERNAME + TEXT -->
           <div class="comment-content">
-            <span class="comment-username">{{comment.username}}</span>
+            <span
+              class="comment-username"
+              (click)="onUsernameClick(comment.username)"
+              >{{comment.username}}</span
+            >
             <p class="comment-text">{{comment.text}}</p>
             <span class="comment-date"
               >{{comment.created_at | date: 'MMM d, y'}}</span
@@ -324,7 +334,11 @@
               <ion-icon name="person-circle-outline"></ion-icon>
             </div>
             <div class="reply-content">
-              <span class="reply-username">{{reply.username}}</span>
+              <span
+                class="reply-username"
+                (click)="onUsernameClick(reply.username)"
+                >{{reply.username}}</span
+              >
               <p class="reply-text">{{reply.text}}</p>
               <span class="reply-date"
                 >{{reply.created_at | date: 'MMM d, y'}}</span

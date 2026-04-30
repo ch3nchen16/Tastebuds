@@ -180,6 +180,7 @@ ion-toolbar{
 /* Form Field Rows*/
 
   ion-input{
+    --padding-start: 10px;
     font-size: 16px;
     --padding-top: 4px;
     --padding-bottom: 8px;
@@ -195,6 +196,7 @@ ion-toolbar{
 
   ion-textarea{
     font-size: 16px;
+    --padding-start: 10px;
     --padding-top: 4px;
     --padding-bottom: 8px;
     border-radius: 8px;
@@ -265,6 +267,7 @@ ion-toolbar{
 
   ion-button{
     --background: #E8475F;
+    --background-activated: #c73550;
     --border-radius: 8px;
     --box-shadow: none;
     height: 48px;

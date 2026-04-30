@@ -128,7 +128,12 @@
             <ion-icon name="person-circle-outline"></ion-icon>
           </div>
           <div class="card-user-details">
-            <span class="card-username">{{post.username}}</span>
+            <!-- (click)="$event.stopPropagation() prevents triggering post card click -->
+            <span
+              class="card-username"
+              (click)="$event.stopPropagation(); onUserClick(post.username)"
+              >{{post.username}}</span
+            >
             <span class="card-date"
               >{{post.created_at | date: 'MMM d, y'}}</span
             >

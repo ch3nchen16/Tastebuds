@@ -785,6 +785,11 @@ ion-toolbar {
         border-bottom: 1px solid #f4f5f8;
         padding-bottom: 12px;
 
+        &.highlighted {
+            background: #fff5f6; // light tongue red tint
+            transition: background 0.3s ease;
+        }
+
         @media (min-width: 768px) {
             margin-bottom: 20px; 
             padding-bottom: 16px; 

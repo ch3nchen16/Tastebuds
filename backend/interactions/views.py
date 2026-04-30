@@ -267,7 +267,8 @@ def add_comment(request, post_id):
                 recipient=post.user, # post owner
                 sender=request.user, # person who commented
                 notification_type='comment',
-                post=post # which post was commented on
+                post=post, # which post was commented on
+                comment=comment  # which comment was made
             )
 
         # returns new created comment as JSON so frontend can display
@@ -342,7 +343,8 @@ def add_reply(request, comment_id):
                 recipient=comment.user, # comment owner
                 sender=request.user, # person who replied
                 notification_type='reply',
-                post=comment.post # which post the comment belongs to
+                post=comment.post, # which post the comment belongs to
+                comment=comment  # which comment was replied to
             )
 
         serializer = ReplySerializer(reply)
@@ -420,7 +422,7 @@ def mark_notifications_read(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def unread_notifications_count(request):
-    
+
     count = Notification.objects.filter(
         recipient=request.user,
         is_read=False

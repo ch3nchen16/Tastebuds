@@ -1,0 +1,219 @@
+.notifications-content {
+    --background: #ffffff; 
+}
+
+ion-icon {
+    color: #E8475F;
+}
+
+/* SPINNER  */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* centers spinner vertically */
+}
+
+/* EMPTY STATE NO NOTIFS  */
+.empty-state {
+    display: flex;
+    flex-direction: column; /* stacks icon and text vertically */
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    color: #808080; /* grey */
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 56px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 64px;
+        }
+    }
+
+    p {
+        font-size: 14px;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
+    }
+}
+
+/* SECTION HEADER - Today / Last 7 Days */
+.section-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #808080; /* grey */
+    padding: 12px 16px 4px;
+    background: #f4f5f8; /* light grey background to separate sections */
+
+    /* Tablet */
+    @media (min-width: 768px) {
+        font-size: 14px;
+        padding: 14px 24px 6px;
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        font-size: 15px;
+        padding: 16px 32px 8px;
+    }
+}
+
+/* NOTIFICATION ITEM */
+.notification-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* space between avatar and text */
+    padding: 12px 16px;
+    border-bottom: 1px solid #f4f5f8; /* light grey divider */
+    cursor: pointer;
+
+    /* Tablet */
+    @media (min-width: 768px) {
+        padding: 14px 24px;
+        gap: 16px;
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        padding: 16px 32px;
+        gap: 20px;
+    }
+
+    /* UNREAD lighter red tint to highlight unread notifications */
+    &.unread {
+        background: #fff5f6;
+    }
+
+    /* SENDER AVATAR */
+    .notif-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%; /* circular */
+        object-fit: cover; /* crops image without stretching */
+        flex-shrink: 0; /* prevents avatar shrinking when text is long */
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            width: 52px;
+            height: 52px;
+        }
+    }
+
+    /* DEFAULT AVATAR when no profile picture */
+    .notif-avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0; /* prevents shrinking */
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            width: 52px;
+            height: 52px;
+        }
+
+        ion-icon {
+            font-size: 40px;
+            color: #808080; /* grey */
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 48px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 52px;
+            }
+        }
+    }
+
+    /* NOTIFICATION TEXT */
+    .notif-content {
+        flex: 1; /* takes up remaining space */
+
+        .notif-text {
+            font-size: 13px;
+            margin: 0 0 2px;
+            line-height: 1.4; /* makes text readable on multiple lines */
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 14px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 15px;
+            }
+
+            .notif-username {
+                font-weight: 600; /* bold username */
+            }
+        }
+
+        .notif-date {
+            font-size: 11px;
+            color: #808080; /* grey */
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 12px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+/* SHOW MORE BUTTON */
+.show-more {
+    text-align: center;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #E8475F; 
+    cursor: pointer;
+
+    /* Tablet */
+    @media (min-width: 768px) {
+        font-size: 14px;
+        padding: 16px;
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        font-size: 15px;
+        padding: 18px;
+    }
+}

@@ -42,10 +42,13 @@ class NotificationSerializer(serializers.ModelSerializer):
     
     # calculated field that returns a human readable notification message
     message = serializers.SerializerMethodField()
+
+    # allow_null because only reply notifications have a comment
+    comment_id = serializers.IntegerField(source='comment.id', read_only=True, allow_null=True)
     
     class Meta:
         model = Notification
-        fields = ['id', 'sender_username', 'sender_profile_picture', 'notification_type', 'post_id', 'is_read', 'created_at', 'message']
+        fields = ['id', 'sender_username', 'sender_profile_picture', 'notification_type', 'post_id', 'is_read', 'created_at', 'message', 'comment_id']
 
     def get_message(self, obj):
         # returns a message based on notification type

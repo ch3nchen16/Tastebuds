@@ -1,13 +1,114 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>notifications</ion-title>
+    <ion-buttons slot="start">
+      <!-- Back btn to go back to home page -->
+      <ion-button (click)="onBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">notifications</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="notifications-content">
+  <!-- LOADING SPINNER -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- EMPTY STATE ( only shows if no notifs at all )-->
+    <div
+      class="empty-state"
+      *ngIf="todayNotifications.length === 0 && lastWeekNotifications.length === 0"
+    >
+      <ion-icon name="notifications-outline" class="empty-icon"></ion-icon>
+      <p>No notifications yet</p>
+    </div>
+
+    <!-- TODAY -->
+    <!-- only if there are notifs from today -->
+    <div *ngIf="todayNotifications.length > 0">
+      <div class="section-header">Today</div>
+      <!-- loops thru today's notif -->
+      <div
+        class="notification-item"
+        *ngFor="let notification of todayNotifications"
+        (click)="onNotificationClick(notification)"
+        [class.unread]="!notification.is_read"
+      >
+        <!-- SENDER PFP -->
+        <img
+          *ngIf="notification.sender_profile_picture"
+          [src]="notification.sender_profile_picture"
+          class="notif-avatar"
+        />
+        <!-- default avatar if no pfp -->
+        <div
+          *ngIf="!notification.sender_profile_picture"
+          class="notif-avatar-placeholder"
+        >
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+
+        <!-- NOTIFICATION TEXT -->
+        <div class="notif-content">
+          <p class="notif-text">
+            <!-- today's notifs show the time -->
+            <span class="notif-username">{{notification.sender_username}}</span>
+            {{notification.message}}
+          </p>
+          <span class="notif-date"
+            >{{notification.created_at | date: 'h:mm a'}}</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- LAST 7 DAYS -->
+    <div *ngIf="lastWeekNotifications.length > 0">
+      <div class="section-header">Last 7 Days</div>
+      <!-- visibleLastWeekNotifications limits to 5 and shows all when show more is clicked -->
+      <div
+        class="notification-item"
+        *ngFor="let notification of visibleLastWeekNotifications"
+        (click)="onNotificationClick(notification)"
+        [class.unread]="!notification.is_read"
+      >
+        <!-- SENDER PFP -->
+        <img
+          *ngIf="notification.sender_profile_picture"
+          [src]="notification.sender_profile_picture"
+          class="notif-avatar"
+        />
+        <div
+          *ngIf="!notification.sender_profile_picture"
+          class="notif-avatar-placeholder"
+        >
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+
+        <!-- NOTIFICATION TEXT -->
+        <div class="notif-content">
+          <p class="notif-text">
+            <span class="notif-username">{{notification.sender_username}}</span>
+            {{notification.message}}
+          </p>
+          <span class="notif-date"
+            >{{notification.created_at | date: 'MMM d, y'}}</span
+          >
+        </div>
+      </div>
+
+      <!-- SHOW MORE BUTTON -->
+      <!-- only displays when there are more than 5 notifs -->
+      <div
+        class="show-more"
+        *ngIf="!showMoreLastWeek && lastWeekNotifications.length > initialLimit"
+        (click)="showMoreLastWeek = true"
+      >
+        Show More
+      </div>
+    </div>
+  </div>
 </ion-content>

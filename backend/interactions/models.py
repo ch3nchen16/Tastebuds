@@ -77,7 +77,9 @@ class Notification(models.Model):
     post = models.ForeignKey('posts.Post', on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
     # false by default, set to true when user opens notifications page
     is_read = models.BooleanField(default=False)
-    
+    # for reply notification 
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+        
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -5,6 +5,7 @@ urlpatterns = [
     #<str:username> = URL parameter - captures the string in that part of url 
     #name = parameter for each path makes the url reusable
     # FOLLOW
+    path('follow/<str:username>/', views.follow_user, name='follow_user'),
     path('unfollow/<str:username>/', views.unfollow_user, name='unfollow_user'), # ex: /api/interactions/unfollow/testuser/, <str:username> captures testuser, gives username = testuser to unfollow_user view, DELETE
     path('is-following/<str:username>/', views.is_following, name='is_following'), #/api/interactions/is-following/testuser/ calls is_following, GET
     path('followers/<str:username>/', views.get_followers, name='get_followers'), #/api/interactions/followers/testuser/ calls get_followers, GET

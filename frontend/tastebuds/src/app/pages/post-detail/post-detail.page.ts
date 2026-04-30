@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common'; // *ngIf, *ngFot
 import { RouterModule, ActivatedRoute, Router } from '@angular/router'; //activate route = get post id from URL
 import { HttpClient } from '@angular/common/http'; // for api reqs
@@ -27,6 +27,9 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class PostDetailPage implements OnInit {
+
+  //@ViewChild = decoratore that lets you access a child element from .ts ! = I guarantee this will exist
+  @ViewChild(IonContent) content!: IonContent //direc reference to ion-content
 
   post: any = null; //stores the full post data
   isLoading = true; //shows spinner
@@ -67,6 +70,16 @@ export class PostDetailPage implements OnInit {
   async ngOnInit() {
     this.postId = Number(this.route.snapshot.paramMap.get('id')); //reads id from URL , snapshot = one time read of current URL params
     await this.loadPost();
+
+    // scroll to a specific comment
+    //ngOnInit() reads comment id from url
+    const commentId = this.route.snapshot.queryParamMap.get('commentId');
+    if (commentId) {
+        //waits 100ms before running scroll code (give Angular some time to render comment elements )
+        setTimeout(() => {
+            this.scrollToComment(Number(commentId));
+        }, 100);
+    }
   }
 
   //DISPLAY POSTS
@@ -330,6 +343,32 @@ export class PostDetailPage implements OnInit {
       console.error('Failed to delete post', err);
     }
   }
+
+  onUsernameClick(username: string) {
+    this.router.navigate(['/profile', username]);
+  }
+
+  // Scroll to a comment for notif
+  scrollToComment(commentId: number) {
+    this.expandedReplies.add(commentId);
+
+    setTimeout(() => {
+      // searches html page for element w/ id="comment-5" (in html [id]="'comment-' + comment.id")
+        const element = document.getElementById(`comment-${commentId}`);
+        console.log('Element found:', element);
+        console.log('offsetTop:', element?.offsetTop);
+        
+        if (element) {
+            // 0 = x-axis position (horizontal scroll) we don't do that so it's 0,
+            // -100 (y position) scroll down 100px space above comment,
+            // 300 = how long scroll animation takes in ms 
+            this.content.scrollToPoint(0, element.offsetTop - 100, 500);
+            element.classList.add('highlighted');
+            // after 2 seconds remove highlighted background
+            setTimeout(() => element.classList.remove('highlighted'), 2000);
+        }
+    }, 100); 
+}
 
   onBack() {
     this.location.back();
