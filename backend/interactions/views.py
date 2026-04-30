@@ -4,10 +4,12 @@ from rest_framework.decorators import api_view, permission_classes
 #permission classes = controls who can access endpoint
 from rest_framework.permissions import IsAuthenticated, AllowAny #only logged in users can access
 from rest_framework.response import Response #converts py dictionaries to json to send to forntend
-from .models import Follow, Like, Comment, Reply #our follow, like, comment, reply model
+from .models import Follow, Like, Comment, Reply, Notification #our follow, like, comment, reply model
 from users.models import User #our user model to look up users by username
 from posts.models import Post #our Post model
-from .serializers import CommentSerializer, ReplySerializer
+from .serializers import CommentSerializer, ReplySerializer, NotificationSerializer
+from django.utils import timezone
+from datetime import timedelta
 
 # FOLLOW A USER
 @api_view(['POST'])
@@ -27,8 +29,16 @@ def follow_user(request, username): #username comes from URL e.g /api/interactio
 
         #create follow
         Follow.objects.create(follower=request.user, following=user_to_follow) #creates new follow record in postgres linking the two users
-        return Response({'message': f'You are now following {username}'}, status=status.HTTP_201_CREATED)
 
+        # CREATE FOLLOW NOTIFICATION
+        Notification.objects.create(
+            recipient=user_to_follow,  # person being followed
+            sender=request.user,   # person who followed
+            notification_type='follow',
+            post=None # no post for follow notifications
+        )
+
+        return Response({'message': f'You are now following {username}'}, status=status.HTTP_201_CREATED)
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -48,8 +58,15 @@ def unfollow_user(request, username):
 
         #delete follow
         follow.delete()
-        return Response({'message': f'You have unfollowed {username}'})
 
+        # DELETE FOLLOW NOTIFICATION
+        Notification.objects.filter(
+            recipient=user_to_unfollow,
+            sender=request.user,
+            notification_type='follow'
+        ).delete()
+
+        return Response({'message': f'You have unfollowed {username}'})
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -141,6 +158,15 @@ def like_post(request, post_id):
         #creates new like record in DB linking user to post
         Like.objects.create(user=request.user, post=post) # request.user is populated by django from token
 
+        # CREATE LIKE NOTIFICATION (only if it's not your own post)
+        if post.user != request.user:
+            Notification.objects.create(
+                recipient=post.user, # post owner
+                sender=request.user, # person who liked
+                notification_type='like',
+                post=post # which post was liked
+            )
+
         return Response({
             'message': 'Post liked',
             'likes_count': post.likes.count()
@@ -165,6 +191,15 @@ def unlike_post(request, post_id):
 
         #deletes like record from db
         like.delete()
+
+        # DELETE LIKE NOTIFICATION
+        Notification.objects.filter(
+            recipient=post.user,
+            sender=request.user,
+            notification_type='like',
+            post=post
+        ).delete()
+
         return Response({
             'message': 'Post unliked',
             'likes_count': post.likes.count()
@@ -225,6 +260,16 @@ def add_comment(request, post_id):
             user=request.user, # gets logged in user form JWT token
             text=text.strip() # removes any extra whitespace
         )
+
+        # CREATE COMMENT NOTIFICATION (only if it's not your own post)
+        if post.user != request.user:
+            Notification.objects.create(
+                recipient=post.user, # post owner
+                sender=request.user, # person who commented
+                notification_type='comment',
+                post=post # which post was commented on
+            )
+
         # returns new created comment as JSON so frontend can display
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -240,6 +285,16 @@ def delete_comment(request, comment_id):
         #looks for comment that matches both comment_id and belongs to logged in user
         comment = Comment.objects.get(id=comment_id, user=request.user)
         # user=request.user ensures only the comment owner can delete it
+        post = comment.post
+        
+        # DELETE COMMENT NOTIFICATION
+        Notification.objects.filter(
+            recipient=post.user,
+            sender=request.user,
+            notification_type='comment',
+            post=post
+        ).delete()
+
         comment.delete()
         return Response({'message': 'Comment deleted'})
     #if you try to delete antoher user's commment it returns error
@@ -280,6 +335,16 @@ def add_reply(request, comment_id):
             user=request.user,
             text=text.strip()
         )
+
+        # CREATE REPLY NOTIFICATION (only if it's not your own comment)
+        if comment.user != request.user:
+            Notification.objects.create(
+                recipient=comment.user, # comment owner
+                sender=request.user, # person who replied
+                notification_type='reply',
+                post=comment.post # which post the comment belongs to
+            )
+
         serializer = ReplySerializer(reply)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -293,7 +358,71 @@ def delete_reply(request, reply_id):
     try:
         reply = Reply.objects.get(id=reply_id, user=request.user)
         # user=request.user ensures only the reply owner can delete it
+        comment = reply.comment
         reply.delete()
+
+        # DELETE REPLY NOTIFICATION
+        Notification.objects.filter(
+            recipient=comment.user,
+            sender=request.user,
+            notification_type='reply',
+            post=comment.post
+        ).delete()
         return Response({'message': 'Reply deleted'})
     except Reply.DoesNotExist:
         return Response({'error': 'Reply not found or not authorised'}, status=status.HTTP_404_NOT_FOUND)
+    
+# GET NOTIFICATIONS
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_notifications(request):
+
+    # delete notifications older than 7 days
+    # timezone.now() = current datetime, timedelta(days=7) = 7 day duration
+    seven_days_ago = timezone.now() - timedelta(days=7)
+
+    Notification.objects.filter(
+        recipient=request.user,
+        created_at__lt=seven_days_ago   # __lt = less than (older than 7 days)
+    ).delete()
+
+    # get remaining notifications
+    notifications = Notification.objects.filter(recipient=request.user)
+
+    # split into today and last 7 days
+    today = timezone.now().date()
+    today_notifications = notifications.filter(created_at__date=today)
+    # __date extracts just the date part from the datetime
+    last_7_days_notifications = notifications.exclude(created_at__date=today)
+    # exclude today's notifications
+
+    today_serializer = NotificationSerializer(today_notifications, many=True)
+    last_7_days_serializer = NotificationSerializer(last_7_days_notifications, many=True)
+
+    return Response({
+        'today': today_serializer.data,
+        'last_7_days': last_7_days_serializer.data
+    })
+
+# MARK ALL NOTIFICATIONS AS READ
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def mark_notifications_read(request):
+
+    Notification.objects.filter(
+        recipient=request.user,
+        is_read=False # only update unread notifications
+    ).update(is_read=True)  # bulk update = updates all matching records in single SQL query
+    return Response({'message': 'All notifications marked as read'})
+
+
+# GET UNREAD NOTIFICATIONS COUNT
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def unread_notifications_count(request):
+    
+    count = Notification.objects.filter(
+        recipient=request.user,
+        is_read=False
+    ).count()
+    return Response({'unread_count': count})

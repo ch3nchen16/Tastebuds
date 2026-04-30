@@ -54,3 +54,35 @@ class Reply(models.Model): # Creates repy table in postgresql
 
     def __str__(self):
         return f"{self.user.username} replied to comment {self.comment.id}"
+    
+
+# NOTIFICATION
+class Notification(models.Model):
+
+    NOTIFICATION_TYPES = [
+       #('database', 'readable')
+        ('like', 'Like'),  # someone liked your post
+        ('comment', 'Comment'), # someone commented on your post
+        ('reply', 'Reply'), # someone replied to your comment
+        ('follow', 'Follow'), # someone followed you
+    ]
+
+    # user who receives the notif
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    # user who triggered the notif
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
+    # what type of notif it is (like, comment, reply, follow)
+    notification_type = models.CharField(max_length=10, choices=NOTIFICATION_TYPES)
+    # links notif to a post (allows null cuz you follow a user not a post)
+    post = models.ForeignKey('posts.Post', on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+    # false by default, set to true when user opens notifications page
+    is_read = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # - newest notifications first
+        ordering = ['-created_at'] 
+
+    def __str__(self):
+        return f"{self.sender.username} {self.notification_type} -> {self.recipient.username}"

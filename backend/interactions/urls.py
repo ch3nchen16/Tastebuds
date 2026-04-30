@@ -22,4 +22,9 @@ urlpatterns = [
     path('comments/<int:comment_id>/replies/', views.get_replies, name='get_replies'), # captures comment_id, nested under comments/ cuz replies belong to a comment GET 
     path('comments/<int:comment_id>/replies/add/', views.add_reply, name='add_reply'), # /add/ for add_reply POST 
     path('comments/replies/<int:reply_id>/delete/', views.delete_reply, name='delete_reply'), # captures reply_id to delete a reply using its id DELETE
+    # NOTIFICATIONS
+    path('notifications/', views.get_notifications, name='get_notifications'), # GET
+    path('notifications/read/', views.mark_notifications_read, name='mark_notifications_read'), # PUT
+    path('notifications/unread-count/', views.unread_notifications_count, name='unread_notifications_count'), # GET
+
 ]
