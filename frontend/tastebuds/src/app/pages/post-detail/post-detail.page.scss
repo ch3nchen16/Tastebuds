@@ -40,6 +40,7 @@ ion-toolbar {
     background: #E8475F;; /*red background while media loads*/
 }
 
+
 .media-scroll {
     display: flex;
     overflow-x: auto; /*allows horizontal scrolling for multiple pics*/ 
@@ -91,7 +92,10 @@ ion-toolbar {
 }
 
 .post-header {
-    padding: 12px 16px;        
+    padding: 12px 16px; 
+    display: flex; /*puts pfp and username beside eachother*/
+    align-items: center; /*vertically centres them*/
+    justify-content: space-between; /*pushes content to opposite ends if needed*/       
 
     @media (min-width: 768px) { /*tablet*/
         padding: 14px 20px;     
@@ -101,9 +105,6 @@ ion-toolbar {
         padding: 16px 22px;      
     }
 
-    display: flex; /*puts pfp and username beside eachother*/
-    align-items: center; /*vertically centres them*/
-    justify-content: space-between; /*pushes content to opposite ends if needed*/
 }
 
 .user-info {
@@ -680,10 +681,11 @@ ion-toolbar {
     }
 }
 
-/* LIKE */
-.like-container {
-    display: flex; /*heart btn and like count side by side*/
+/* LIKE AND SAVE BUTTONS */
+.like-save-container {
+    display: flex;
     align-items: center;
+    justify-content: space-between; /* pushes like to left and save to right */
     padding: 0 16px;
 
     @media (min-width: 768px) {
@@ -693,6 +695,12 @@ ion-toolbar {
     @media (min-width: 1024px) {
         padding: 0 32px;
     }
+}
+
+/* LIKE */
+.like-container {
+    display: flex; /*heart btn and like count side by side*/
+    align-items: center;
 
     .likes-count {
         font-size: 14px;
@@ -723,6 +731,26 @@ ion-toolbar {
             font-size: 32px;
         }
 
+    }
+}
+
+/* SAVE */
+.save-container {
+    ion-icon {
+        font-size: 24px;
+        color: #808080; /* grey when not saved */
+
+        @media (min-width: 768px) { 
+            font-size: 28px; 
+        }
+
+        @media (min-width: 1024px) { 
+            font-size: 32px; 
+        }
+
+        &.saved {
+            color: #E8475F; /* tongue red when saved */
+        }
     }
 }
 
@@ -819,6 +847,8 @@ ion-toolbar {
                 height: 32px;
                 border-radius: 50%;
                 object-fit: cover;
+                border-radius: 50%;
+                border: 1.5px solid #E8475F;
 
                 @media (min-width: 768px) { 
                     width: 40px; 
@@ -847,7 +877,7 @@ ion-toolbar {
 
                 ion-icon {
                     font-size: 32px;
-                    color: #888;
+                    color: #E8475F;
 
                     @media (min-width: 768px) { 
                         font-size: 40px; 
@@ -865,6 +895,7 @@ ion-toolbar {
                 .comment-username {
                     font-weight: 600;
                     font-size: 13px;
+                    color: #000000;
 
                     @media (min-width: 768px) { 
                         font-size: 14px;
@@ -878,6 +909,7 @@ ion-toolbar {
                 .comment-text {
                     font-size: 13px;
                     margin: 2px 0;
+                    color: #000000;
 
                     @media (min-width: 768px) { 
                         font-size: 14px; 
@@ -1018,6 +1050,8 @@ ion-toolbar {
                 .reply-avatar-placeholder {
                     width: 24px;
                     height: 24px;
+                    border-radius: 50%;
+                    border: 1.5px solid #E8475F;
 
                     @media (min-width: 768px) { 
                         width: 32px; 
@@ -1031,7 +1065,7 @@ ion-toolbar {
 
                     ion-icon {
                         font-size: 24px;
-                        color: #888;
+                        color: #E8475F;
 
                         @media (min-width: 768px) { 
                             font-size: 32px; 
@@ -1062,6 +1096,7 @@ ion-toolbar {
                     .reply-text {
                         font-size: 12px;
                         margin: 2px 0;
+                        color: #000000;
 
                         @media (min-width: 768px) { 
                             font-size: 13px; 
@@ -1133,3 +1168,64 @@ ion-toolbar {
     } 
 
 } 
+
+.alert-delete-btn {
+    color: #E8475F !important;
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+
+    @media (min-width: 768px) { 
+        padding: 10px 0; 
+    }
+    @media (min-width: 1024px) { 
+        padding: 12px 0; 
+    }
+
+    .load-more-btn {
+        --color: #E8475F;
+        font-size: 13px;
+        font-weight: 600;
+
+        @media (min-width: 768px) { 
+            font-size: 14px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 15px; 
+        }
+    }
+}
+
+/* COMMENT COUNT */
+.comment-count-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .comment-icon {
+        font-size: 24px;
+        color: #888;
+
+        @media (min-width: 768px) { 
+            font-size: 28px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 32px; 
+        }
+    }
+
+    .comment-count {
+        font-size: 14px;
+        color: #888;
+
+        @media (min-width: 768px) { 
+            font-size: 16px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 18px; 
+        }
+    }
+}

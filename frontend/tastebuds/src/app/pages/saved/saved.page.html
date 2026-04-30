@@ -1,13 +1,99 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>saved</ion-title>
+    <ion-title>Saved</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">saved</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="saved-content">
+  <!-- SPINNER -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- TABS -->
+    <div class="posts-tabs">
+      <div
+        class="tab-item"
+        [class.active]="activeTab === 'all'"
+        (click)="setTab('all')"
+      >
+        All
+      </div>
+      <div
+        class="tab-item"
+        [class.active]="activeTab === 'recipes'"
+        (click)="setTab('recipes')"
+      >
+        Recipes
+      </div>
+      <div
+        class="tab-item"
+        [class.active]="activeTab === 'reviews'"
+        (click)="setTab('reviews')"
+      >
+        Reviews
+      </div>
+    </div>
+
+    <!-- EMPTY STATE - NO SAVED POSTS -->
+    <div class="empty-state" *ngIf="savedPosts.length === 0">
+      <ion-icon name="bookmark-outline" class="empty-icon"></ion-icon>
+      <p class="empty-title">No saved posts yet</p>
+      <p class="empty-subtitle">Save posts to find them here later</p>
+    </div>
+
+    <!-- NO RESULTS FOR TAB -->
+    <div
+      class="empty-state"
+      *ngIf="savedPosts.length > 0 && filteredPosts.length === 0"
+    >
+      <p class="empty-title">No {{activeTab}} saved yet</p>
+    </div>
+
+    <!-- POSTS GRID -->
+    <div class="posts-grid" *ngIf="filteredPosts.length > 0">
+      <div
+        class="post-item"
+        *ngFor="let post of filteredPosts"
+        (click)="onPostClick(post.id)"
+      >
+        <!-- IMAGE THUMBNAIL -->
+        <img
+          *ngIf="post.media[0]?.media_type === 'image'"
+          [src]="post.media[0]?.media_url"
+          class="post-thumbnail"
+        />
+
+        <!-- VIDEO THUMBNAIL -->
+        <video
+          *ngIf="post.media[0]?.media_type === 'video'"
+          [src]="post.media[0]?.media_url"
+          class="post-thumbnail"
+        ></video>
+
+        <!-- VIDEO INDICATOR -->
+        <div
+          class="video-indicator"
+          *ngIf="post.media[0]?.media_type === 'video'"
+        >
+          <ion-icon name="play-circle-outline"></ion-icon>
+        </div>
+
+        <!-- MULTIPLE MEDIA INDICATOR -->
+        <div class="multi-indicator" *ngIf="post.media.length > 1">
+          <ion-icon name="copy-outline"></ion-icon>
+        </div>
+
+        <!-- POST TYPE BADGE -->
+        <div
+          class="post-badge"
+          [class.recipe-badge]="post.post_type === 'recipe'"
+          [class.review-badge]="post.post_type === 'review'"
+        >
+          {{post.post_type === 'recipe' ? 'Recipe' : 'Review'}}
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

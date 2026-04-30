@@ -1,0 +1,221 @@
+.saved-content {
+    --background: #ffffff; 
+}
+
+ion-toolbar {
+    --background: #ffffff;
+    --color: #E8475F;
+}
+
+/* LOADING SPINNER */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* centers spinner vertically */
+}
+
+/* TABS */
+.posts-tabs {
+    display: flex;
+    border-top: 0.5px solid #dbdbdb;
+    border-bottom: 0.5px solid #dbdbdb;
+
+    .tab-item {
+        flex: 1; /* each tab takes equal width */
+        text-align: center;
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #888;
+        cursor: pointer;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 15px;
+            padding: 12px 0;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 16px;
+            padding: 14px 0;
+        }
+
+        /* active tab turns red */
+        &.active {
+            color: #E8475F;
+            border-bottom: 2px solid #E8475F;
+        }
+    }
+}
+
+/* EMPTY STATE - NO SAVED POSTS */
+.empty-state {
+    display: flex;
+    flex-direction: column; /* stacks icon and text vertically */
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #888;
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+        color: #888;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 56px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 64px;
+        }
+    }
+
+    .empty-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        color: #333;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 18px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 20px;
+        }
+    }
+
+    .empty-subtitle {
+        font-size: 14px;
+        margin: 0;
+        color: #888;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 15px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 16px;
+        }
+    }
+}
+
+/* POSTS GRID - same as profile page */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    gap: 2px;
+
+    /* Tablet */
+    @media (min-width: 768px) {
+        max-width: 600px;
+        margin: 0 auto;
+        gap: 3px;
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+        max-width: 700px;
+        margin: 0 auto;
+        gap: 3px;
+    }
+
+    .post-item {
+        aspect-ratio: 1; /* square grid items */
+        overflow: hidden; /* clips image to square */
+        position: relative;
+        cursor: pointer;
+        background: #f5f5f5;
+
+        .post-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* fills square without stretching */
+            display: block;
+        }
+
+        /* Play icon for videos */
+        .video-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            color: #ffffff;
+            font-size: 20px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 24px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 28px;
+            }
+        }
+
+        /* Multiple media icon */
+        .multi-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            color: #ffffff;
+            font-size: 18px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 22px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 26px;
+            }
+        }
+
+        /* Recipe/Review badge */
+        .post-badge {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffffff;
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+        }
+
+        /* Recipe badge - tongue red */
+        .recipe-badge {
+            background: #E8475F;
+        }
+
+        /* Review badge - darker red */
+        .review-badge {
+            background: #c73550;
+        }
+    }
+}

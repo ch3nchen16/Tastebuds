@@ -1,0 +1,73 @@
+.settings-content {
+    --background: #ffffff;
+}
+
+ion-toolbar {
+    ion-button {
+        --color: #E8475F;
+    }
+}
+
+/* SETTINGS LIST */
+.settings-list {
+    margin-top: 16px;
+
+    @media (min-width: 768px) { 
+        margin-top: 24px; 
+    }
+    @media (min-width: 1024px) { 
+        margin-top: 32px; 
+    }
+
+    .settings-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border-bottom: 1px solid #f4f5f8;
+        cursor: pointer;
+
+        @media (min-width: 768px) { 
+            padding: 18px 24px; 
+            gap: 16px; 
+        }
+        @media (min-width: 1024px) { 
+            padding: 20px 32px; 
+            gap: 20px; 
+        }
+
+        .settings-icon {
+            font-size: 22px;
+
+            @media (min-width: 768px) { 
+                font-size: 24px; 
+            }
+            @media (min-width: 1024px) { 
+                font-size: 26px; 
+            }
+        }
+
+        .settings-label {
+            font-size: 15px;
+            font-weight: 500;
+
+            @media (min-width: 768px) { 
+                font-size: 16px; 
+            }
+            @media (min-width: 1024px) { 
+                font-size: 17px; 
+            }
+        }
+
+        /* red for dangerous actions */
+        &.danger {
+            .settings-icon { color: #E8475F; }
+            .settings-label { color: #E8475F; }
+        }
+    }
+}
+
+/* ALERT DELETE BUTTON */
+.alert-delete-btn {
+    color: #E8475F !important;
+}

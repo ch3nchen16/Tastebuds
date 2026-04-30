@@ -183,12 +183,12 @@ async onToggleFollow() {
 
   // View Followers list
   onViewFollowers() {
-    console.log("View followers");
+    this.router.navigate(['/followers', this.username]);
   }
 
   // View Following list
   onViewFollowing() {
-    console.log("View following");
+    this.router.navigate(['/following', this.username]);
   }
 
   // When user clicks on post on profile grid

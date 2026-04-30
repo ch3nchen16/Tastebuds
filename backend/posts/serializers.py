@@ -22,7 +22,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 # RECIPE SERIALIZER
 class RecipeSerializer(serializers.ModelSerializer):
-    #ingredients is a nested serializer that uses RecipeIngredientSerializer to serialize all ingredients in a recipe
+    #ingredients is a nested serializer, instead of returning ingredient id it uses RecipeIngredientSerializer to return full imgredient objects
     ingredients = RecipeIngredientSerializer(many=True, read_only=True) # many=True cuz many ingredients. read_only cuz ingredients are not created here (created in RecipeIngredientSerializer)
 
     #returns recipe details with list of ingredients
@@ -34,7 +34,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 # REVIEW SERIALIZER
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Review
+        model = Review # converts all review fields to JSON
         fields = ['id', 'restaurant_name', 'location', 'price', 'rating', 'diet_option', 'dining_type']
 
 
@@ -47,11 +47,16 @@ class PostSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True) # instead of returning user id it will return username instead followung FK to User model (Displays who made the post)
     profile_picture = serializers.CharField(source='user.profile_picture', read_only=True) #returns post's user pfp URL to display their avatar next to the post
     likes_count = serializers.SerializerMethodField() # SerializerMethodField() used when value needs to be calculated. Looks for matho get_likes_count
+    comments_count = serializers.SerializerMethodField()
 
     class Meta: # defines everyhting frontend receives for a post all in one API call
         model = Post
-        fields = ['id', 'post_type', 'caption', 'cuisine_type', 'created_at', 'username', 'profile_picture', 'media', 'recipe', 'review', 'likes_count']
+        fields = ['id', 'post_type', 'caption', 'cuisine_type', 'created_at', 'username', 'profile_picture', 'media', 'recipe', 'review', 'likes_count', 'comments_count']
 
     # obj = Post instance serialized
     def get_likes_count(self, obj): #obj.likes uses related_name='likes' from Like model to access all likes
         return obj.likes.count() #.count() runs SELECT COUNT SQL query
+    
+    def get_comments_count(self, obj): 
+        return obj.comments.count()
+    

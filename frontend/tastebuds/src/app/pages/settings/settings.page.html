@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="settings-content">
+  <!-- DELETE ACCOUNT -->
+  <div class="settings-list">
+    <div class="settings-item danger" (click)="onDeleteAccount()">
+      <ion-icon name="trash-outline" class="settings-icon"></ion-icon>
+      <span class="settings-label">Delete Account</span>
+    </div>
+  </div>
+</ion-content>

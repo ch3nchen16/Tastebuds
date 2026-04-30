@@ -4,10 +4,11 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router'; //activa
 import { HttpClient } from '@angular/common/http'; // for api reqs
 import { lastValueFrom } from 'rxjs'; //converts observable to promise
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline} from 'ionicons/icons';
+import { arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline, bookmark} from 'ionicons/icons';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle,
-  IonButtons, IonButton, IonIcon, IonSpinner, IonInput
+  IonButtons, IonButton, IonIcon, IonSpinner, IonInput,
+  AlertController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth'; 
 import { environment } from '../../../environments/environment';
@@ -46,12 +47,20 @@ export class PostDetailPage implements OnInit {
   newComment = ''; // what user is typing [[(ngModel)] bound to input so updates as user types
   isPostingComment = false; // spinner while posting
   isLoadingComments = false; // spinner while loading comments
+  isLoadingMore = false; // spinner for load more button
   // tracks which comments have replies visible
   expandedReplies: Set<number> = new Set(); // Set is like an array but only stores unique values, stores comment ids that have replies visible  ex comment 5 and 3 have replies visible then this set contains {3, 5}
   // stores reply text for each comment by comment id
   replyText: { [key: number]: string } = {}; // dictionary stores reply text for each comment separately using comment id as a key ex reply to comment 3, it stores { 3: "your reply text" }
   // tracks posting state per comment
   isPostingReply: { [key: number]: boolean } = {}; // ex if you're replying to comment 3 { 3: true }
+  commentOffset = 0; // tracks how many comments have been loaded
+  commentLimit = 5;  // how many comments to load at a time
+  hasMoreComments = false; // true if there are more comments to load
+
+  // SAVE POST STATE VARIABKES
+  isSaved = false; // true if logged in user has saved post, gets updated by loadSaveStatus()
+  isSaving = false; // prevents double tapping
 
   private apiUrl = environment.apiUrl; //from env file
   private interactionsUrl = environment.apiUrl.replace('/users', '/interactions'); //base url pointing to users app replace usrs part of url w/ interactions
@@ -61,9 +70,10 @@ export class PostDetailPage implements OnInit {
     private router: Router,
     private http: HttpClient,
     private authService: AuthService,
-    private location: Location //so we can go backt to previous page
+    private location: Location, //so we can go backt to previous page
+    private alertController: AlertController // for alert pop up when deleting a post or comment
   ) {
-    addIcons({ arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline });
+    addIcons({ arrowBackOutline, heart, heartOutline, chatbubbleOutline, bookmarkOutline, trashOutline, timeOutline, peopleOutline, speedometerOutline, restaurantOutline, locationOutline, cashOutline, sendOutline, chevronDownOutline, chevronUpOutline, bookmark });
   }
 
   // GETS POST ID FROM URL
@@ -104,6 +114,7 @@ export class PostDetailPage implements OnInit {
       // When post loads check if current user likes it so heart shows correct state
       await this.loadLikeStatus(); 
       await this.loadComments();
+      await this.loadSaveStatus(); 
 
       this.isLoading = false;
     } catch (err) {
@@ -183,13 +194,18 @@ export class PostDetailPage implements OnInit {
     try {
       // showz spinner
       this.isLoadingComments = true;
+      this.commentOffset = 0; // reset offset when loading fresh
 
       // sends GET to ex /api/interactions/comments/5/, django returns all comments w/ nested replies
       const response: any = await lastValueFrom( 
-        this.http.get(`${this.interactionsUrl}/comments/${this.postId}/`)
+        // GET /api/interactions/comments/5/?limit=5&offset=0
+        this.http.get(`${this.interactionsUrl}/comments/${this.postId}/?limit=${this.commentLimit}&offset=0`)
       );
       // stores full list of comments so HTML can loop thru and display them
-      this.comments = response;
+      this.comments = response.comments;
+      this.hasMoreComments = response.has_more; // true if more comments exist
+      this.commentOffset = this.commentLimit; // next load starts after first 5
+      this.isLoadingComments = false;
       // hides spinner
       this.isLoadingComments = false; 
     } catch (err) {
@@ -226,21 +242,60 @@ export class PostDetailPage implements OnInit {
     }
   }
 
+  // LOAD MORE COMMENTS
+async loadMoreComments() {
+    if (this.isLoadingMore) return; // prevents double tapping
+    this.isLoadingMore = true;
+
+    try {
+        const response: any = await lastValueFrom(
+            // GET /api/interactions/comments/5/?limit=5&offset=5
+            this.http.get(`${this.interactionsUrl}/comments/${this.postId}/?limit=${this.commentLimit}&offset=${this.commentOffset}`)
+        );
+        // appends new comments to existing list
+        this.comments = [...this.comments, ...response.comments];
+        this.hasMoreComments = response.has_more;
+        this.commentOffset += this.commentLimit; // moves offset forward for next load
+        this.isLoadingMore = false;
+    } catch (err) {
+        console.error('Failed to load more comments', err);
+        this.isLoadingMore = false;
+    }
+}
+
   // DELETE COMMENT
   async onDeleteComment(commentId: number) {
-    try {
-      const token = await this.authService.getValidToken();
-      await lastValueFrom(
-        // DELETE /api/interactions/comments/5/delete/
-        this.http.delete(`${this.interactionsUrl}/comments/${commentId}/delete/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      );
-      // removes comment from list without reloading all comments
-      this.comments = this.comments.filter(c => c.id !== commentId); // filter creates new array that keeps only comments whose id doesnt match deleted one
-    } catch (err) {
-      console.error('Failed to delete comment', err);
-    }
+    const alert = await this.alertController.create({
+        header: "Delete Comment",
+        message: "Are you sure you want to delete this comment?",
+        buttons: [
+            {
+                text: "Cancel",
+                role: "cancel"
+            },
+            {
+                text: "Delete",
+                role: "destructive",
+                cssClass: "alert-delete-btn",
+                handler: async () => {
+                  try {
+                    const token = await this.authService.getValidToken();
+                    await lastValueFrom(
+                      // DELETE /api/interactions/comments/5/delete/
+                      this.http.delete(`${this.interactionsUrl}/comments/${commentId}/delete/`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                      })
+                    );
+                    // removes comment from list without reloading all comments
+                    this.comments = this.comments.filter(c => c.id !== commentId); // filter creates new array that keeps only comments whose id doesnt match deleted one
+                  } catch (err) {
+                    console.error('Failed to delete comment', err);
+                  }
+                }
+            }
+        ]
+    });
+    await alert.present();
   }
 
   // TOGGLE REPLIES VISIBILITY
@@ -300,25 +355,44 @@ export class PostDetailPage implements OnInit {
 
   // DELETE REPLY
   async onDeleteReply(commentId: number, replyId: number) {
-    try {
-      const token = await this.authService.getValidToken();
-      await lastValueFrom(
-        // DELETE /api/interactions/comments/replies/3/delete/
-        this.http.delete(`${this.interactionsUrl}/comments/replies/${replyId}/delete/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      );
+    const alert = await this.alertController.create({
+        header: "Delete Reply",
+        message: "Are you sure you want to delete this reply?",
+        buttons: [
+            {
+                text: "Cancel",
+                role: "cancel"
+            },
+            {
+                text: "Delete",
+                role: "destructive",
+                cssClass: "alert-delete-btn",
+                handler: async () => {
+                  try {
+                    const token = await this.authService.getValidToken();
+                    await lastValueFrom(
+                      // DELETE /api/interactions/comments/replies/3/delete/
+                      this.http.delete(`${this.interactionsUrl}/comments/replies/${replyId}/delete/`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                      })
+                    );
 
-      // finds comment
-      const comment = this.comments.find(c => c.id === commentId);
-      if (comment) {
-        // filters out deleted reply from replies array
-        comment.replies = comment.replies.filter((r: any) => r.id !== replyId);
-        comment.replies_count--;
-      }
-    } catch (err) {
-      console.error('Failed to delete reply', err);
-    }
+                    // finds comment
+                    const comment = this.comments.find(c => c.id === commentId);
+                    if (comment) {
+                      // filters out deleted reply from replies array
+                      comment.replies = comment.replies.filter((r: any) => r.id !== replyId);
+                      comment.replies_count--;
+                    }
+                  } catch (err) {
+                    console.error('Failed to delete reply', err);
+                  }
+                }
+            }
+        ]
+    });
+    await alert.present();
+    
   }
 
   // CHECK IF COMMENT BELONGS TO LOGGED IN USER
@@ -329,19 +403,37 @@ export class PostDetailPage implements OnInit {
 
   // DELETE POST
   async onDelete() {
-    try {
-      const token = await this.authService.getValidToken(); //gets valid JWT token which refreshes if expired
-      const postsUrl = this.apiUrl.replace('/users', '/posts');
-      await lastValueFrom(
-        this.http.delete(`${postsUrl}/${this.postId}/delete/`, { //sends DELETE req to /api/posts/5/delete/ w/ JWT token then django verifies token and post owner then deletes
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      );
-      //goes back to profile page if successful
-      this.router.navigate(['/tabs/profile']);
-    } catch (err) {
-      console.error('Failed to delete post', err);
-    }
+    const alert = await this.alertController.create({
+      header: "Delete Post",
+      message: "Are you sure you want to delete this post?",
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Delete",
+          role: "destructive",
+          cssClass: "alert-delete-btn",
+          handler: async () => {
+            try {
+              const token = await this.authService.getValidToken(); //gets valid JWT token which refreshes if expired
+              const postsUrl = this.apiUrl.replace('/users', '/posts');
+              await lastValueFrom(
+                this.http.delete(`${postsUrl}/${this.postId}/delete/`, { //sends DELETE req to /api/posts/5/delete/ w/ JWT token then django verifies token and post owner then deletes
+                  headers: { Authorization: `Bearer ${token}` }
+                })
+              );
+              //goes back to profile page if successful
+              this.router.navigate(['/tabs/profile']);
+            } catch (err) {
+              console.error('Failed to delete post', err);
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   onUsernameClick(username: string) {
@@ -369,6 +461,66 @@ export class PostDetailPage implements OnInit {
         }
     }, 100); 
 }
+
+  // CHECK IF SAVED
+  async loadSaveStatus() {
+      try {
+          const token = await this.authService.getValidToken();
+          const response: any = await lastValueFrom(
+              // sends GET to /api/interactions/is-saved/5/, django checjs if user saved this post
+              this.http.get(`${this.interactionsUrl}/is-saved/${this.postId}/`, {
+                  headers: { Authorization: `Bearer ${token}` }
+              })
+          );
+          // django then returns is_saved: true/false
+          this.isSaved = response.is_saved; 
+      } catch (err) {
+          console.error('Failed to load save status', err);
+      }
+  }
+
+  // TOGGLE SAVE / UNSAVE
+  async onToggleSave() {
+      if (this.isSaving) return; // prevents double tapping
+      this.isSaving = true;
+
+      // flips isSaved instantly before API responds so bookmark icon updates immediately
+      const previousIsSaved = this.isSaved; //uses previousisSaved not this.isSaved cuz this.isSaved has already been flipped 
+      this.isSaved = !this.isSaved;
+
+      try {
+          const token = await this.authService.getValidToken();
+
+          if (previousIsSaved) {
+              // UNSAVE = DELETE /api/interactions/unsave/5/
+              await lastValueFrom(
+                  this.http.delete(`${this.interactionsUrl}/unsave/${this.postId}/`, {
+                      headers: { Authorization: `Bearer ${token}` }
+                  })
+              );
+          } else {
+              // SAVE = POST /api/interactions/save/5/
+              await lastValueFrom(
+                  this.http.post(`${this.interactionsUrl}/save/${this.postId}/`, {}, {
+                      headers: { Authorization: `Bearer ${token}` }
+                  })
+              );
+          }
+      } catch (err) {
+          console.error('Failed to toggle save', err);
+          this.isSaved = previousIsSaved; // revert back to previous state if failed
+      } finally {
+          this.isSaving = false;
+      }
+  }
+
+  // scrolls to comments after clicking on chatbubble comment count
+  scrollToComments() {
+    const element = document.querySelector('.comments-section');
+    if (element) {
+      this.content.scrollToPoint(0, (element as HTMLElement).offsetTop, 500);
+    }
+  }
 
   onBack() {
     this.location.back();

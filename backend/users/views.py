@@ -133,3 +133,23 @@ def search_users(request):
     
     serializer = UserProfileSerializer(users, many=True)
     return Response(serializer.data)
+
+# DELETE ACCOUNT
+@api_view(['DELETE'])
+#must be authenticated
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    try:
+        user = request.user
+        firebase_uid = user.firebase_uid
+
+        # delete from firebase first
+        if firebase_uid:
+            firebase_auth.delete_user(firebase_uid)
+
+        # then delete from django (cascades everything)
+        user.delete() # deletes user and everything linked via CASCADE
+        
+        return Response({'message': 'Account deleted successfully'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

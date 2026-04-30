@@ -3,6 +3,9 @@
 }
 
 ion-toolbar {
+    --background: #ffffff;
+    --color: #E8475F;
+
     ion-button{
         --color: #E8475F;    
     }
@@ -13,7 +16,7 @@ ion-toolbar {
     max-width: 100%;
 
     /* Tablet Screens */
-    @media (min-width: 768px) {/* apply these on screens 768px or wider */
+    @media (min-width: 768px) {
         max-width: 600px;
         margin: 0 auto; /* centers horizontally */
     }
@@ -191,6 +194,16 @@ ion-toolbar {
         height: 32px;
         font-size: 14px;
         font-weight: 600;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
     }
 
     .follow-btn{
@@ -202,6 +215,16 @@ ion-toolbar {
         height: 32px;
         font-size: 14px;
         font-weight: 600;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
     }
 }
 
@@ -286,6 +309,16 @@ ion-toolbar {
             color: #ffffff;
             font-size: 20px;
             filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 24px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 28px;
+            }
         }
 
         // Multiple photos icon
@@ -296,6 +329,16 @@ ion-toolbar {
             color: #ffffff;
             font-size: 18px;
             filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+
+            /* Tablet */
+            @media (min-width: 768px) {
+                font-size: 22px;
+            }
+
+            /* Desktop */
+            @media (min-width: 1024px) {
+                font-size: 26px;
+            }
         }
     }
 }
@@ -311,5 +354,15 @@ ion-toolbar {
 
     p{
         font-size: 14px;
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            font-size: 18px;
+        }
     }
 }

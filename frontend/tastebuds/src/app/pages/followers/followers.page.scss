@@ -1,0 +1,156 @@
+.follower-content {
+    --background: #ffffff;
+}
+
+ion-toolbar {
+    ion-button {
+        --color: #E8475F;
+    }
+}
+
+/* LOADING SPINENR */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+
+/* EMPTY STATE - NO FOLLOWERS */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    color: #888;
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+
+        @media (min-width: 768px) { 
+            font-size: 56px; 
+        }
+
+        @media (min-width: 1024px) { 
+            font-size: 64px; 
+        }
+    }
+
+    p {
+        font-size: 14px;
+
+        @media (min-width: 768px) { 
+            font-size: 16px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 18px; 
+        }
+    }
+}
+
+/* USER LIST */
+.user-list {
+    .user-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f4f5f8;
+        cursor: pointer;
+
+        @media (min-width: 768px) { 
+            padding: 14px 24px; 
+            gap: 16px; 
+        }
+        @media (min-width: 1024px) { 
+            padding: 16px 32px; 
+            gap: 20px; 
+        }
+
+        /* PROFILE PICTURE */
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #E8475F;
+            flex-shrink: 0;
+
+            @media (min-width: 768px) { 
+                width: 52px; 
+                height: 52px; 
+            }
+            @media (min-width: 1024px) { 
+                width: 60px; 
+                height: 60px; 
+            }
+        }
+
+        /* DEFAULT AVATAR */
+        .avatar-placeholder {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid #E8475F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            @media (min-width: 768px) { 
+                width: 52px; 
+                height: 52px; 
+            }
+            @media (min-width: 1024px) { 
+                width: 60px; 
+                height: 60px; 
+            }
+
+            ion-icon {
+                font-size: 40px;
+                color: #E8475F;
+
+                @media (min-width: 768px) { 
+                    font-size: 48px; 
+                }
+                @media (min-width: 1024px) { 
+                    font-size: 56px; 
+                }
+            }
+        }
+
+        /* USERNAME + DISPLAY NAME */
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .user-username {
+                font-size: 14px;
+                font-weight: 600;
+                color: #000;
+
+                @media (min-width: 768px) { 
+                    font-size: 15px; 
+                }
+                @media (min-width: 1024px) { 
+                    font-size: 16px; 
+                }
+            }
+
+            .user-displayname {
+                font-size: 13px;
+                color: #888;
+
+                @media (min-width: 768px) { 
+                    font-size: 14px; 
+                }
+                @media (min-width: 1024px) { 
+                    font-size: 15px; 
+                }
+            }
+        }
+    }
+}

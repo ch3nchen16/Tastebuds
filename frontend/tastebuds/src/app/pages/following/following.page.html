@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Following</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="following-content">
+  <!-- LOADING SPINNER -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- EMPTY STATE -->
+    <div class="empty-state" *ngIf="following.length === 0">
+      <ion-icon name="person-circle-outline" class="empty-icon"></ion-icon>
+      <p>No followers yet</p>
+    </div>
+
+    <!-- FOLLOWERS LIST -->
+    <div class="user-list">
+      <div
+        class="user-item"
+        *ngFor="let user of following"
+        (click)="onUserClick(user.username)"
+      >
+        <!-- PROFILE PICTURE -->
+        <img
+          *ngIf="user.profile_picture"
+          [src]="user.profile_picture"
+          class="user-avatar"
+        />
+        <div *ngIf="!user.profile_picture" class="avatar-placeholder">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+
+        <!-- USERNAME + DISPLAY NAME -->
+        <div class="user-info">
+          <span class="user-username">{{user.username}}</span>
+          <span class="user-displayname" *ngIf="user.display_name"
+            >{{user.display_name}}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

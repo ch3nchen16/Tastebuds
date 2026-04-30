@@ -70,12 +70,18 @@ async resendVerificationEmail(email: string, password: string): Promise<void> {
   // Sign in temporarily to get the Firebase user
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const firebaseUser = userCredential.user;
+
+  // forces firebase to fetch latest user state before sending verification email, wasn't working w/o this cuz firebase was using the cached state which was stale causing an error
+  await firebaseUser.reload();
   
   // Send new verification email
   await sendEmailVerification(firebaseUser);
   
   // Sign out again since email isn't verified yet
   await signOut(auth);
+} catch (err: any) {
+        console.log('Resend error details:', err.code, err.message);
+        throw err;
 }
 
 // LOGIN

@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>New Post</ion-title>
+    <ion-title>Create A Post</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -55,11 +55,16 @@
             [src]="media.url"
             class="preview-img"
           />
-          <video
-            *ngIf="media.type === 'video'"
-            [src]="media.url"
-            class="preview-img"
-          ></video>
+
+          <!-- VIDEO PREVIEW -->
+          <div *ngIf="media.type === 'video'" class="video-preview-placeholder">
+            <ion-icon
+              name="play-circle-outline"
+              class="video-play-icon"
+            ></ion-icon>
+            <span class="video-label">Video</span>
+          </div>
+
           <div class="remove-media" (click)="removeMedia(i)">
             <!-- removes media at that index -->
             <ion-icon name="close-outline"></ion-icon>

@@ -4,6 +4,11 @@
 
 ion-toolbar {
     --background: #ffffff;
+    --color: #E8475F;
+
+    ion-title {
+        color: #E8475F;
+    }
 }
 
 /* SEARCH BAR */

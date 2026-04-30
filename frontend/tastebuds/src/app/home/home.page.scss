@@ -4,22 +4,48 @@
 
 ion-toolbar {
   --background: #ffffff;
+}
 
-  /* NOTIFICATION BUTTON */
-  ion-buttons {
-    ion-button {
-      position: relative;
+/* TOOLBAR LAYOUT */
+.toolbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    padding: 4px 8px;
+
+    .toolbar-title {
+      flex: 1;
+      text-align: center;
+    }
+
+    .app-title {
+      font-family: 'Raleway', sans-serif;
+      color: #E8475F;
+      font-size: 22px;
+      font-weight: 700;
+
+      @media (min-width: 768px) { 
+        font-size: 26px; 
+      }
+      @media (min-width: 1024px) { 
+        font-size: 30px; 
+      }
+    }
+
+    .notif-btn {
+      position: absolute;
+      right: 0;
+      --color: #E8475F;
 
       ion-icon {
         font-size: 24px;
-        color: #E8475F;
-
-        @media (min-width: 768px) {
-          font-size: 28px;
+        @media (min-width: 768px) { 
+          font-size: 28px; 
         }
-
-        @media (min-width: 1024px) {
-          font-size: 32px;
+        @media (min-width: 1024px) { 
+          font-size: 32px; 
         }
       }
 
@@ -31,38 +57,7 @@ ion-toolbar {
         min-width: 16px;
         height: 16px;
         border-radius: 8px;
-
-        @media (min-width: 768px) {
-          font-size: 12px;
-          min-width: 18px;
-          height: 18px;
-        }
-
-        @media (min-width: 1024px) {
-          font-size: 13px;
-          min-width: 20px;
-          height: 20px;
-        }
       }
-    }
-  }
-}
-
-/* APP TITLE */
-.app-title {
-  font-family: 'Playfair Display', serif;
-  color: #E8475F;
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  padding: 8px 0 4px;
-
-  @media (min-width: 768px) {
-    font-size: 26px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 30px;
   }
 }
 

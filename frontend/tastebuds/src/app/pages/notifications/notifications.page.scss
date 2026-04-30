@@ -2,6 +2,11 @@
     --background: #ffffff; 
 }
 
+ion-toolbar {
+    --background: #ffffff;
+    --color: #E8475F;
+}
+
 ion-icon {
     color: #E8475F;
 }
@@ -107,6 +112,8 @@ ion-icon {
         border-radius: 50%; /* circular */
         object-fit: cover; /* crops image without stretching */
         flex-shrink: 0; /* prevents avatar shrinking when text is long */
+        border-radius: 50%;
+        border: 1.5px solid #E8475F;
 
         /* Tablet */
         @media (min-width: 768px) {
@@ -141,7 +148,7 @@ ion-icon {
 
         ion-icon {
             font-size: 40px;
-            color: #808080; /* grey */
+            color: #E8475F; /* grey */
 
             /* Tablet */
             @media (min-width: 768px) {
@@ -163,6 +170,7 @@ ion-icon {
             font-size: 13px;
             margin: 0 0 2px;
             line-height: 1.4; /* makes text readable on multiple lines */
+            color: #000000;
 
             /* Tablet */
             @media (min-width: 768px) {
@@ -175,6 +183,7 @@ ion-icon {
             }
 
             .notif-username {
+                color: #000000;
                 font-weight: 600; /* bold username */
             }
         }

@@ -44,7 +44,7 @@ export class RegisterPage {
       this.isLoading = false;
 
       // Navigate to login page after successful registration
-      this.router.navigate(['/tabs/login'], {
+      this.router.navigate(['/login'], {
         queryParams: {message: "Please check your email to verify your account"}
       });
     } catch (err: any) {

@@ -123,8 +123,9 @@
   margin-top: 8px;
 
   ion-button {
-    --color: #E8475F;
+    --color: #fff;
     --border-color: #E8475F;
-    --background: transparent;
+    --background: #E8475F;
+    --background-activated: #c73550;
   }
 }

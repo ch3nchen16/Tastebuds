@@ -12,4 +12,5 @@ urlpatterns = [
     path('profile/<str:username>/', views.get_profile, name='get_profile'),
     path('update-profile/', views.update_profile, name='update_profile'),
     path('search/', views.search_users, name='search_users'),
+    path('delete-account/', views.delete_account, name='delete_account'),
 ]

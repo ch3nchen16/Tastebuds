@@ -65,4 +65,16 @@ export const routes: Routes = [
     path: 'notifications',
     loadComponent: () => import('./pages/notifications/notifications.page').then( m => m.NotificationsPage)
   },
+  {
+    path: 'followers/:username', // added /:username to know whose followers/following list to load
+    loadComponent: () => import('./pages/followers/followers.page').then( m => m.FollowersPage)
+  },
+  {
+    path: 'following/:username',
+    loadComponent: () => import('./pages/following/following.page').then( m => m.FollowingPage)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings.page').then( m => m.SettingsPage)
+  },
 ];

@@ -18,6 +18,7 @@ export class LoginPage {
   //properties: variables that connect to the html (via *ngIf & ngModel)
   username = "";
   password = "";
+  private savedPassword = ""; // stores password for resend verification
   isLoading = false; //for showing loading spinner when user clicks btn
   errorMessage = "";
   successMessage = ""; //for showing success message when user is redirected from register page
@@ -25,6 +26,9 @@ export class LoginPage {
 
   //constructor injects these services so we can call login() & navigate
   constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {
+
+    this.username = "";
+    this.password = "";
     // Check if user just registered and needs to verify email
     this.route.queryParams.subscribe(params => {
       if (params["message"]) {
@@ -53,12 +57,16 @@ export class LoginPage {
       this.isLoading = false;
       if (err.message === "Please verify your email before logging in") {
         this.errorMessage = "Please verify your email before logging in";
+        this.savedPassword = this.password; // save password before anything clears it
         this.showResendButton = true; //shows the "Resend Verification Email" btn after user doesnt verify 
       } else if (err.code === "auth/invalid-credential") {
         this.errorMessage = "Invalid username or password";
         this.showResendButton = false; //hides resend btn
       } else if (err.code === "auth/too-many-requests") {
         this.errorMessage = "Too many attempts. Please try again later";
+        this.showResendButton = false;
+      } else if (err.code === "auth/user-not-found" || err.message?.includes('404')) {
+        this.errorMessage = "No account found with that username or email";
         this.showResendButton = false;
       } else {
         this.errorMessage = err.message || "Login failed. Please try again.";
@@ -69,21 +77,40 @@ export class LoginPage {
 
   async onResendVerification() {
     try {
-    // We need email so get it from Django if username was used
-    let email = this.username;
-    if (!this.username.includes("@")) {
-      const userResponse: any = await lastValueFrom(
-        this.authService.getEmailByUsername(this.username)
-      );
-      email = userResponse.email; 
-    }
-    await this.authService.resendVerificationEmail(email, this.password);
+      console.log('username:', this.username);
+        console.log('password:', this.password);
+        console.log('savedPassword:', this.savedPassword);
+      // We need email so get it from Django if username was used
+      let email = this.username;
+      if (!this.username.includes("@")) {
+        const userResponse: any = await lastValueFrom(
+          this.authService.getEmailByUsername(this.username)
+        );
+        email = userResponse.email; 
+      }
+      await this.authService.resendVerificationEmail(email, this.savedPassword);
+      this.errorMessage = "";
+      this.successMessage = "Verification email sent! Please check your inbox.";
+      this.showResendButton = false;
+      this.savedPassword = ""; //clear pw field
+      } catch (err: any) {
+        this.errorMessage = "Failed to resend verification email. Please try again.";
+      }
+  }
+
+  // Added this because we need to clear login input and messages after registration
+  ionViewWillEnter() {
+    this.username = "";
+    this.password = "";
     this.errorMessage = "";
-    this.successMessage = "Verification email sent! Please check your inbox.";
     this.showResendButton = false;
-    this.password = ""; //clear pw field
-    } catch (err: any) {
-      this.errorMessage = "Failed to resend verification email. Please try again.";
+    
+    // only clear success message if no query param message
+    const params = this.route.snapshot.queryParams;
+    if (!params["message"]) {
+        this.successMessage = "";
     }
   }
+
 }
+

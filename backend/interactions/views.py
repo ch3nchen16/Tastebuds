@@ -233,11 +233,23 @@ def post_likes(request, post_id):
 def get_comments(request, post_id):
     try:
         post = Post.objects.get(id=post_id)
+
+        #get limit and offset from URL query parameters
+        # /api/interactions/comments/5/?limit=5&offset=0
+        limit = int(request.query_params.get('limit', 5)) # default 5 comments
+        offset = int(request.query_params.get('offset', 0)) # default start from beginning
+
         #gets all comments for this post, Comment model already orders by -created_at so newest first
         comments = Comment.objects.filter(post=post)
+        # total number of comments on this post
+        total_count = comments.count() 
         #seria;izes all comments including nested replies (cuz ReplySerializer nested inside)
         serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
+        return Response({
+            'comments': serializer.data,
+            'total_count': total_count, # total comments so frontend knows if there are more
+            'has_more': (offset + limit) < total_count # true if there are still more comments to load
+        })
     except Post.DoesNotExist:
         return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
 

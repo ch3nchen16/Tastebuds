@@ -90,17 +90,40 @@
       <span>{{post.cuisine_type}}</span>
     </div>
 
-    <!-- LIKE BUTTON -->
-    <div class="like-container">
-      <ion-button fill="clear" (click)="onToggleLike()" [disabled]="isLiking">
-        <!-- shows filled heart if liked, empty heart if not -->
-        <ion-icon
-          [name]="isLiked ? 'heart' : 'heart-outline'"
-          [class.liked]="isLiked"
-          slot="icon-only"
-        ></ion-icon>
-      </ion-button>
-      <span class="likes-count">{{likesCount}}</span>
+    <div class="like-save-container">
+      <!-- LIKE BUTTON -->
+      <div class="like-container">
+        <ion-button fill="clear" (click)="onToggleLike()" [disabled]="isLiking">
+          <!-- shows filled heart if liked, empty heart if not -->
+          <ion-icon
+            [name]="isLiked ? 'heart' : 'heart-outline'"
+            [class.liked]="isLiked"
+            slot="icon-only"
+          ></ion-icon>
+        </ion-button>
+        <span class="likes-count">{{likesCount}}</span>
+      </div>
+
+      <!-- COMMENT COUNT -->
+      <div
+        class="comment-count-container"
+        (click)="scrollToComments()"
+        style="cursor: pointer"
+      >
+        <ion-icon name="chatbubble-outline" class="comment-icon"></ion-icon>
+        <span class="comment-count">{{post.comments_count}}</span>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <div class="save-container">
+        <ion-button fill="clear" (click)="onToggleSave()" [disabled]="isSaving">
+          <ion-icon
+            [name]="isSaved ? 'bookmark' : 'bookmark-outline'"
+            [class.saved]="isSaved"
+            slot="icon-only"
+          ></ion-icon>
+        </ion-button>
+      </div>
     </div>
 
     <!-- ===== RECIPE DETAILS ===== -->
@@ -380,6 +403,18 @@
             </ion-button>
           </div>
         </div>
+      </div>
+      <!-- LOAD MORE COMMENTS -->
+      <div class="load-more-container" *ngIf="hasMoreComments">
+        <ion-button
+          fill="clear"
+          (click)="loadMoreComments()"
+          [disabled]="isLoadingMore"
+          class="load-more-btn"
+        >
+          <ion-spinner *ngIf="isLoadingMore" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoadingMore">Load More Comments</span>
+        </ion-button>
       </div>
     </div>
   </div>

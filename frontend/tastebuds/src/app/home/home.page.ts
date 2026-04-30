@@ -9,7 +9,7 @@ import { personCircleOutline, copyOutline, timeOutline, locationOutline, peopleO
 import {
   IonContent, IonHeader, IonToolbar, IonSpinner,
   IonIcon, IonRefresher, IonRefresherContent,
-  IonButton, IonBadge, IonButtons, IonTitle
+  IonButton, IonBadge
 } from '@ionic/angular/standalone';
 import { AuthService } from '../services/auth';
 import { environment } from '../../environments/environment';
@@ -23,7 +23,7 @@ import { environment } from '../../environments/environment';
     CommonModule, RouterModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonSpinner,
     IonIcon, IonRefresher, IonRefresherContent, 
-    IonButtons, IonButton, IonBadge, IonTitle
+    IonButton, IonBadge
   ] //ionRefresherContent enables pull to refresh
 })
 export class HomePage {
