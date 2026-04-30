@@ -1,6 +1,16 @@
 <ion-header>
   <ion-toolbar>
-    <div class="app-title">TasteBuds</div>
+    <ion-title class="app-title">TasteBuds</ion-title>
+    <!-- NOTIFICATIONS BELL -->
+    <ion-buttons slot="end">
+      <ion-button (click)="onNotifications()">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <!-- UNREAD BADGE -->
+        <ion-badge *ngIf="unreadCount > 0" color="danger"
+          >{{unreadCount}}</ion-badge
+        >
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <!-- Tabs -->

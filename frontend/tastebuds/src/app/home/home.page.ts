@@ -5,10 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs'; //await
 import { FormsModule } from '@angular/forms'; // [(ngModel)]
 import { addIcons } from 'ionicons';
-import { personCircleOutline, copyOutline, timeOutline, locationOutline, peopleOutline, restaurantOutline } from 'ionicons/icons';
+import { personCircleOutline, copyOutline, timeOutline, locationOutline, peopleOutline, restaurantOutline, notificationsOutline } from 'ionicons/icons';
 import {
   IonContent, IonHeader, IonToolbar, IonSpinner,
-  IonIcon, IonRefresher, IonRefresherContent
+  IonIcon, IonRefresher, IonRefresherContent,
+  IonButton, IonBadge, IonButtons, IonTitle
 } from '@ionic/angular/standalone';
 import { AuthService } from '../services/auth';
 import { environment } from '../../environments/environment';
@@ -21,7 +22,8 @@ import { environment } from '../../environments/environment';
   imports: [
     CommonModule, RouterModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonSpinner,
-    IonIcon, IonRefresher, IonRefresherContent
+    IonIcon, IonRefresher, IonRefresherContent, 
+    IonButtons, IonButton, IonBadge, IonTitle
   ] //ionRefresherContent enables pull to refresh
 })
 export class HomePage {
@@ -36,6 +38,7 @@ export class HomePage {
   allPosts: any[] = []; //stores all posts (for 'for you' tab)
   followingPosts: any[] = []; //stores posts from people you follow
   isLoading = false; //spinner
+  unreadCount = 0; // stores unread notif count 
 
   private interactionsUrl = environment.apiUrl.replace('/users', '/interactions');
   //both from environment url by replacing /users with correct path 
@@ -46,12 +49,14 @@ export class HomePage {
     private router: Router,
     private authService: AuthService
   ) {
-    addIcons({ personCircleOutline, copyOutline, timeOutline, locationOutline, peopleOutline, restaurantOutline });
+    addIcons({ personCircleOutline, copyOutline, timeOutline, locationOutline, peopleOutline, restaurantOutline, notificationsOutline });
   }
 
   //runs every time home page becomes visible
   async ionViewWillEnter() { 
     await this.loadPosts();
+    // loads unread count every time home page is visible
+    await this.loadUnreadCount(); 
   }
 
   // DISPLAY  POSTS
@@ -85,6 +90,24 @@ export class HomePage {
     } catch (err) {
       console.error('Failed to load posts', err);
       this.isLoading = false;
+    }
+  }
+
+  // UNREAD NOTIFICATION COUNT
+  async loadUnreadCount() {
+    try {
+      // requires auth 
+      const token = await this.authService.getValidToken();
+      const response: any = await lastValueFrom(
+        // sends GET to /api/interactions/notifications/unread-count/ Django counts all unread notifs
+        this.http.get(`${this.interactionsUrl}/notifications/unread-count/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      );
+      // django returns number of unread notifs 
+      this.unreadCount = response.unread_count;
+    } catch (err) {
+      console.error('Failed to load unread count', err);
     }
   }
 
@@ -128,6 +151,11 @@ export class HomePage {
   // NAVIGATE TO POST
   onPostClick(postId: number) {
     this.router.navigate(['/post', postId]);
+  }
+
+  // NAVIGATE TO NOTIFICATIONS PAGE
+  onNotifications() {
+    this.router.navigate(['/notifications']);
   }
 
   // NAVIGATE TO PROFILE

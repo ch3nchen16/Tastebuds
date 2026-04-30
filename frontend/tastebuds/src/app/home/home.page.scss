@@ -4,6 +4,48 @@
 
 ion-toolbar {
   --background: #ffffff;
+
+  /* NOTIFICATION BUTTON */
+  ion-buttons {
+    ion-button {
+      position: relative;
+
+      ion-icon {
+        font-size: 24px;
+        color: #E8475F;
+
+        @media (min-width: 768px) {
+          font-size: 28px;
+        }
+
+        @media (min-width: 1024px) {
+          font-size: 32px;
+        }
+      }
+
+      ion-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 10px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+
+        @media (min-width: 768px) {
+          font-size: 12px;
+          min-width: 18px;
+          height: 18px;
+        }
+
+        @media (min-width: 1024px) {
+          font-size: 13px;
+          min-width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
 }
 
 /* APP TITLE */
@@ -17,6 +59,10 @@ ion-toolbar {
 
   @media (min-width: 768px) {
     font-size: 26px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 30px;
   }
 }
 
