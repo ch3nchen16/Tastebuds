@@ -13,6 +13,7 @@ from firebase_admin import credentials, auth as firebase_auth #credentials=load 
 import os #gives access to environment variables
 from django.db import models
 import resend # for contact form 
+from django.conf import settings
 
 #initialize Firebase Admin SDK
 if not firebase_admin._apps:
