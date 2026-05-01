@@ -71,3 +71,11 @@ Thumbs.db
 
 # Firebase (hide api key)
 frontend/tastebuds/src/app/services/firebase.config.ts
+
+# Backend
+backend/venv/
+backend/.env
+backend/firebase_credentials.json
+backend/db.sqlite3
+backend/__pycache__/
+backend/*.pyc
