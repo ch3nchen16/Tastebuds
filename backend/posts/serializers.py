@@ -14,11 +14,17 @@ class PostMediaSerializer(serializers.ModelSerializer):
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.CharField(source='ingredient.ingredient_name')
      #source='ingredient.ingredient_name' = returns ingredient name instead of id from ingredient foreign key to ingredient model
+    quantity = serializers.SerializerMethodField()
 
     #returns ingredient name, quantity and unit 
     class Meta:
         model = RecipeIngredient
         fields = ['id', 'ingredient_name', 'quantity', 'unit']
+
+    def get_quantity(self, obj):
+        if obj.quantity is None:
+            return None
+        return float(obj.quantity)  # 4.00 = 4, 4.25 
 
 # RECIPE SERIALIZER
 class RecipeSerializer(serializers.ModelSerializer):
