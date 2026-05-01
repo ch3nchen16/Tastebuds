@@ -184,6 +184,8 @@ ion-toolbar{
     font-size: 16px;
     --padding-top: 4px;
     --padding-bottom: 8px;
+    --placeholder-color: #888;
+    --color: #000000;
 
     @media (min-width: 768px) {
       font-size: 17px;
@@ -201,6 +203,8 @@ ion-toolbar{
     --padding-bottom: 8px;
     border-radius: 8px;
     border: 1px solid #dbdbdb;
+    --placeholder-color: #888;
+    --color: #000000;
 
     @media (min-width: 768px) {
       font-size: 17px;
