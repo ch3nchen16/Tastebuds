@@ -336,13 +336,13 @@ export class CreatePostPage implements OnInit {
         body.difficulty = this.difficulty;
         body.diet_req = this.dietReq;
         body.instructions = this.instructions
-          .filter(s => s.trim()) //remobes empty steps
+          .filter(s => s.trim()) //removes empty steps
           .join('\n'); //joins all steps into one string with new lines betw them
         body.ingredients = this.ingredients
-          .filter(i => i.name.trim()) //remobes empty ingredient rows
+          .filter(i => i.name.trim()) //removes empty ingredient rows
           .map(i => ({
             name: i.name,
-            quantity: parseFloat(i.quantity) || null, //converts wuantity string to number 2.5
+            quantity: i.quantity ? parseFloat(i.quantity) : null, //converts wuantity string to number 2.5 no trailing 0s
             unit: i.unit
           }));
       } else {
