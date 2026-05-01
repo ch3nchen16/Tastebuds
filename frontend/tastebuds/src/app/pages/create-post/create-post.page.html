@@ -230,6 +230,21 @@
             [placeholder]="'Step ' + (i + 1) + '...'"
             [(ngModel)]="instructions[i]"
           ></ion-input>
+
+          <!-- UP/DOWN ARROWS -->
+          <div class="step-reorder">
+            <div class="reorder-btn" (click)="moveStepUp(i)" *ngIf="i > 0">
+              <ion-icon name="chevron-up-outline"></ion-icon>
+            </div>
+            <div
+              class="reorder-btn"
+              (click)="moveStepDown(i)"
+              *ngIf="i < instructions.length - 1"
+            >
+              <ion-icon name="chevron-down-outline"></ion-icon>
+            </div>
+          </div>
+
           <div
             class="remove-btn"
             (click)="removeStep(i)"

@@ -408,6 +408,24 @@ export class CreatePostPage implements OnInit {
     return index;
   }
 
+  // Move a step up
+  moveStepUp(index: number) {
+    if (index > 0) {
+        const temp = this.instructions[index];
+        this.instructions[index] = this.instructions[index - 1];
+        this.instructions[index - 1] = temp;
+    }
+  }
+
+  // Move a step down
+  moveStepDown(index: number) {
+      if (index < this.instructions.length - 1) {
+          const temp = this.instructions[index];
+          this.instructions[index] = this.instructions[index + 1];
+          this.instructions[index + 1] = temp;
+      }
+  }
+
   onCancel() {
     this.router.navigate(['/tabs/home']);
   }
