@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 from dotenv import load_dotenv
 import os
+import dj_database_url
+
 load_dotenv()
 
 from pathlib import Path
@@ -37,7 +39,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1c39irv-79@^juv#5m(_r2$4jm%%xcsxe983(v*d*sy^r72sro'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-1c39irv-79@^juv#5m(_r2$4jm%%xcsxe983(v*d*sy^r72sro')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -101,14 +103,9 @@ WSGI_APPLICATION = 'tastebuds_backend.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tastebuds',
-        'USER': 'postgres',
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=f"postgresql://postgres:{os.getenv('DB_PASSWORD')}@localhost:5432/tastebuds"
+    )
 }
 
 
