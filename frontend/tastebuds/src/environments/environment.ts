@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://192.168.1.34:8000/api/users' //for testing on my phone we use laptop's IP address so my phone can access the backend running on my laptop
+  apiUrl: 'https://tastebuds-production-674f.up.railway.app/api/users' //railway app url 
+  // apiUrl: 'http://192.168.1.34:8000/api/users' //for testing on my phone we use laptop's IP address so my phone can access the backend running on my laptop
   //This will be replaced with the actual backend URL when we build the app for production and replace environment.ts with environment.prod.ts which has the production API URL
 };
 
