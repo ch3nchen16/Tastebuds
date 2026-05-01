@@ -12,7 +12,7 @@ from firebase_admin import credentials, auth as firebase_auth #credentials=load 
 #auth renamed to firebase_auth to avoid confusion w/ Django auth used for Firebase authentication functions like verifying tokens and getting user info from Firebase token
 import os #gives access to environment variables
 from django.db import models
-from django.core.mail import send_mail # for contact us
+import resend # for contact form 
 
 #initialize Firebase Admin SDK
 if not firebase_admin._apps:
@@ -170,14 +170,17 @@ def contact_us(request):
         message = request.data.get('message', '').strip()
         if not message:
             return Response({'error': 'Message is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # sets resend api key, authenticates my app w/ Resends email service 
+        resend.api_key = os.getenv('RESEND_API_KEY')
         
-        # django's built in emain function (take 4 arguments)
-        send_mail(
-            subject=f'Support Request from {request.user.username}',
-            message=f'From: {request.user.email}\n\n{message}', #includes username so i know who sent it
-            from_email='noreply@tastebuds.com',
-            recipient_list=['chenylle.geronimo@gmail.com'],
-        )
+        # sends email via resend
+        resend.Emails.send({
+            "from": "onboarding@resend.dev",  # use this until i have my own domain
+            "to": "chenylle.geronimo@gmail.com",
+            "subject": f"Support Request from {request.user.username}",
+            "text": f"From: {request.user.email}\n\n{message}"
+        })
         return Response({'message': 'Message sent successfully'})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
