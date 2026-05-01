@@ -14,9 +14,15 @@ import os #gives access to environment variables
 from django.db import models
 
 #initialize Firebase Admin SDK
-if not firebase_admin._apps: #checks if the Firebase app has already been initialized to prevent re-initialization errors
-    cred = credentials.Certificate(os.getenv('FIREBASE_CREDENTIALS')) #reads path to firebase_credentials.json from .env file & credentials.Certificate() loads service account key file & creates credentials object
-    firebase_admin.initialize_app(cred) #initializes Firebase admnin SDK with the credentials. After we can verify Firebase tokens.
+if not firebase_admin._apps:
+    cred_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+    if cred_json:
+        import json
+        cred_dict = json.loads(cred_json)
+        cred = credentials.Certificate(cred_dict)
+    else:
+        cred = credentials.Certificate(os.getenv('FIREBASE_CREDENTIALS'))
+    firebase_admin.initialize_app(cred)
 
 # REGISTER VIEW
 @api_view(['POST']) #this decorator tells Django REST Frameworl that this funtion is an API endpoint that only accepts POST requests
@@ -149,7 +155,7 @@ def delete_account(request):
 
         # then delete from django (cascades everything)
         user.delete() # deletes user and everything linked via CASCADE
-        
+
         return Response({'message': 'Account deleted successfully'})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
