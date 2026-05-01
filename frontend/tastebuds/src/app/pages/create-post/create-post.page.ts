@@ -18,7 +18,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './create-post.page.html',
   styleUrls: ['./create-post.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSpinner, IonInput, IonButtons, IonButton, IonIcon, CommonModule, FormsModule, RouterModule, chevronUpOutline, chevronDownOutline]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSpinner, IonInput, IonButtons, IonButton, IonIcon, CommonModule, FormsModule, RouterModule]
 })
 export class CreatePostPage implements OnInit {
 
@@ -92,7 +92,7 @@ export class CreatePostPage implements OnInit {
     private http: HttpClient,
     private cloudinary: CloudinaryService
   ) {
-    addIcons({ imageOutline, closeOutline, addOutline });
+    addIcons({ imageOutline, closeOutline, addOutline,  chevronUpOutline, chevronDownOutline });
   }
 
   async ngOnInit() {} //empty for now no need to load any data when page opens
