@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, mailOutline, trashOutline} from 'ionicons/icons';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonTextarea } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonTextarea, IonSpinner } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { environment } from '../../../environments/environment';
@@ -17,7 +17,7 @@ import { Location } from '@angular/common';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonTextarea]
+  imports: [CommonModule, FormsModule, RouterModule, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonTextarea, IonSpinner]
 })
 export class SettingsPage {
 
