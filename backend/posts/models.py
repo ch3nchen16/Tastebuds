@@ -73,7 +73,7 @@ class RecipeIngredient(models.Model): #bridge table in our ERD
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients') #recipe can use many ingredients
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE) #each ingredient can be used in many recipes
     quantity = models.DecimalField(max_digits=10, decimal_places=2) #ex. 2.5 cups of flour, req
-    unit = models.CharField(max_length=50) #ex. cups, grams req
+    unit = models.CharField(max_length=50, blank=True, null=True) #ex. cups, grams req
 
     def __str__(self):
         return f"{self.ingredient.ingredient_name} for recipe {self.recipe.id}"

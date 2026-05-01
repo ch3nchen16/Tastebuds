@@ -171,7 +171,9 @@
           *ngFor="let ing of post.recipe.ingredients"
         >
           <span class="ingredient-name">{{ing.ingredient_name}}</span>
-          <span class="ingredient-amount">{{ing.quantity}} {{ing.unit}}</span>
+          <span class="ingredient-amount"
+            >{{ing.quantity}} {{ing.unit || ''}}</span
+          >
         </div>
       </div>
 

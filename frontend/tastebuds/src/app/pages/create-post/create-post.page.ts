@@ -289,10 +289,6 @@ export class CreatePostPage implements OnInit {
         this.errorMessage = `Please enter quantity for ${ingredient.name}`;
         return;
       }
-      if (!ingredient.unit.trim()) {
-        this.errorMessage = `Please enter unit for ${ingredient.name}`;
-        return;
-      }
     }
     if (!this.instructions.some(s => s.trim())) {
       this.errorMessage = 'Please add at least one instruction';

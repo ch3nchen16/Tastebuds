@@ -32,13 +32,11 @@ def create_post(request):
             if not ingredients or not any(i.get('name') for i in ingredients):
                 return Response({'error': 'At least one ingredient is required'}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Checks if every ingredient has quantity and unit
+            # Checks if every ingredient has quantity
             for item in ingredients:
                 if item.get('name'):
                     if not item.get('quantity'):
                         return Response({'error': f'Quantity is required for {item["name"]}'}, status=status.HTTP_400_BAD_REQUEST)
-                    if not item.get('unit'):
-                        return Response({'error': f'Unit is required for {item["name"]}'}, status=status.HTTP_400_BAD_REQUEST)
                     
         # Validate Review inputs
         if post_type == 'review':
@@ -94,7 +92,7 @@ def create_post(request):
                         recipe=recipe,
                         ingredient=ingredient,
                         quantity=item.get('quantity'),
-                        unit=item.get('unit')
+                        unit=item.get('unit', '')
                     )
             
             #if review, create review record instead
