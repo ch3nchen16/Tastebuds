@@ -44,7 +44,7 @@
     <div *ngIf="contactSuccess" class="success-message">
       <p>{{ contactSuccess }}</p>
     </div>
-    <ion-button expand="block" (click)="onSendMessage()" [disabled]="isSending">
+    <ion-button (click)="onSendMessage()" [disabled]="isSending">
       <ion-spinner *ngIf="isSending" name="crescent"></ion-spinner>
       <span *ngIf="!isSending">Send Message</span>
     </ion-button>

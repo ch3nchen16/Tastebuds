@@ -125,6 +125,8 @@ ion-toolbar {
         margin-top: 8px;
         --background: #E8475F;
         --background-activated: #c73550;
+        width: auto;
+        float: right;
     }
 
     .error-message {
