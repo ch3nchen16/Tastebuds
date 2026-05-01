@@ -94,7 +94,7 @@ export class LoginPage {
       this.showResendButton = false;
       this.savedPassword = ""; //clear pw field
       } catch (err: any) {
-        this.errorMessage = "Failed to resend verification email. Please try again.";
+        this.errorMessage = "Failed to resend verification email. Please check your spam folder or try again later.";
       }
   }
 
