@@ -92,7 +92,7 @@ export class SettingsPage {
     this.contactError = '';
     this.contactSuccess = '';
     try {
-      const token = this.authService.getToken();
+      const token = await this.authService.getValidToken();
       await lastValueFrom(
         this.http.post(`${this.apiUrl}/contact/`, { message: this.contactMessage }, {
           headers: { Authorization: `Bearer ${token}` }
