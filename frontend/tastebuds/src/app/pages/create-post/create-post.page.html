@@ -88,11 +88,13 @@
 
     <!-- SHARED FIELDS BETW EACH POST TYPE-->
     <div class="form-section">
+      <div class="section-title">Caption</div>
       <ion-input
         fill="outline"
         placeholder="Write a caption (optional)"
         [(ngModel)]="caption"
       ></ion-input>
+      <div class="section-title">Cuisine Type</div>
       <ion-input
         fill="outline"
         placeholder="Cuisine type e.g Italian (optional)"
@@ -121,7 +123,7 @@
         </div>
 
         <!-- Difficulty -->
-        <div class="label">Difficulty</div>
+        <div class="section-title">Difficulty</div>
         <div class="pill-row">
           <div
             class="pill"
@@ -147,7 +149,7 @@
         </div>
 
         <!-- Dietary Requirements -->
-        <div class="label">Dietary Requirements (optional)</div>
+        <div class="section-title">Dietary Requirements (Optional)</div>
         <div class="pill-row">
           <div
             class="pill"
@@ -259,7 +261,7 @@
 
     <!-- REVIEW POST -->
     <div *ngIf="postType === 'review'">
-      <div class="section-title">Review Details</div>
+      <div class="section-title">Restaurant Details</div>
       <div class="form-section">
         <!-- Restaurant name -->
         <ion-input
@@ -292,7 +294,7 @@
         </select>
 
         <!-- Star Rating -->
-        <div class="label">Rating (required)</div>
+        <div class="section-title">Rating (Required)</div>
         <div class="star-row">
           <span
             class="star"
@@ -304,7 +306,7 @@
         </div>
 
         <!-- Dining Type -->
-        <div class="label">Dining Type (optional)</div>
+        <div class="section-title">Dining Type (Optional)</div>
         <div class="pill-row">
           <div
             class="pill"
@@ -341,7 +343,9 @@
         </div>
 
         <!-- Dietary Options -->
-        <div class="label">Any Dietary Options Provided? (optional)</div>
+        <div class="section-title">
+          Any Dietary Options Provided? (Optional)
+        </div>
         <div class="pill-row">
           <div
             class="pill"
