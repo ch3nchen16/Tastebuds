@@ -83,6 +83,19 @@ ion-toolbar {
         padding: 32px; 
     }
 
+    .settings-label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #000000;
+
+        @media (min-width: 768px) { 
+            font-size: 17px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 18px; 
+        }
+    }
+
     .contact-intro {
         font-size: 16px;
         color: #666;
@@ -115,28 +128,47 @@ ion-toolbar {
     }
 
     .error-message {
-        color: #E8475F;
-        font-size: 15px;
+        background: #ffe5e5;
+        border-radius: 8px;
+        padding: 10px;
         margin-bottom: 8px;
 
-        @media (min-width: 768px) { 
-            font-size: 17px; 
+        
+        p {
+            color: #d00;
+            font-size: 14px;
+            margin: 0;
+
+            @media (min-width: 768px) { 
+                font-size: 16px; 
+            }
+            @media (min-width: 1024px) { 
+                font-size: 18px; 
+            }
         }
-        @media (min-width: 1024px) { 
-            font-size: 19px; 
-        }
+        
     }
 
     .success-message {
-        color: #2dd36f;
-        font-size: 15px;
+        background: #e5ffe5;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
         margin-bottom: 8px;
 
-        @media (min-width: 768px) { 
-            font-size: 17px; 
+        p {
+            color: #008000;
+            font-size: 14px;
+            margin: 0;
+
+            @media (min-width: 768px) { 
+                font-size: 16px; 
+            }
+            @media (min-width: 1024px) { 
+                font-size: 18px; 
+            }
         }
-        @media (min-width: 1024px) { 
-            font-size: 19px; 
-        }
+
+        
     }
 }

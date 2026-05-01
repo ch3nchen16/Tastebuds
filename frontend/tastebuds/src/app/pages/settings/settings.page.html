@@ -36,9 +36,13 @@
       [(ngModel)]="contactMessage"
       rows="6"
     ></ion-textarea>
-    <div *ngIf="contactError" class="error-message">{{ contactError }}</div>
+
+    <div *ngIf="contactError" class="error-message">
+      <p>{{ contactError }}</p>
+      >
+    </div>
     <div *ngIf="contactSuccess" class="success-message">
-      {{ contactSuccess }}
+      <p>{{ contactSuccess }}</p>
     </div>
     <ion-button expand="block" (click)="onSendMessage()" [disabled]="isSending">
       <ion-spinner *ngIf="isSending" name="crescent"></ion-spinner>
