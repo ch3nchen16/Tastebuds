@@ -10,11 +10,38 @@
 </ion-header>
 
 <ion-content class="settings-content">
-  <!-- DELETE ACCOUNT -->
   <div class="settings-list">
+    <!-- CONTACT US -->
+    <div class="settings-item" (click)="onContactUs()">
+      <ion-icon name="mail-outline" class="settings-icon"></ion-icon>
+      <span class="settings-label">Contact Us</span>
+    </div>
+
+    <!-- DELETE ACCOUNT -->
     <div class="settings-item danger" (click)="onDeleteAccount()">
       <ion-icon name="trash-outline" class="settings-icon"></ion-icon>
       <span class="settings-label">Delete Account</span>
     </div>
+  </div>
+
+  <!-- CONTACT FORM (shows inline when tapped) -->
+  <div class="contact-form" *ngIf="showContactForm">
+    <p class="contact-intro">
+      Have a question or feedback? We'll get back to you soon.
+    </p>
+    <ion-textarea
+      fill="outline"
+      placeholder="Write your message..."
+      [(ngModel)]="contactMessage"
+      rows="6"
+    ></ion-textarea>
+    <div *ngIf="contactError" class="error-message">{{ contactError }}</div>
+    <div *ngIf="contactSuccess" class="success-message">
+      {{ contactSuccess }}
+    </div>
+    <ion-button expand="block" (click)="onSendMessage()" [disabled]="isSending">
+      <ion-spinner *ngIf="isSending" name="crescent"></ion-spinner>
+      <span *ngIf="!isSending">Send Message</span>
+    </ion-button>
   </div>
 </ion-content>

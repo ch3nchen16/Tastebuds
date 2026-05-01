@@ -12,6 +12,7 @@ from firebase_admin import credentials, auth as firebase_auth #credentials=load 
 #auth renamed to firebase_auth to avoid confusion w/ Django auth used for Firebase authentication functions like verifying tokens and getting user info from Firebase token
 import os #gives access to environment variables
 from django.db import models
+from django.core.mail import send_mail # for contact us
 
 #initialize Firebase Admin SDK
 if not firebase_admin._apps:
@@ -157,5 +158,26 @@ def delete_account(request):
         user.delete() # deletes user and everything linked via CASCADE
 
         return Response({'message': 'Account deleted successfully'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+# CONTACT US VIEW
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def contact_us(request):
+    try:
+        # gets message from request body and strips whitespace
+        message = request.data.get('message', '').strip()
+        if not message:
+            return Response({'error': 'Message is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # django's built in emain function (take 4 arguments)
+        send_mail(
+            subject=f'Support Request from {request.user.username}',
+            message=f'From: {request.user.email}\n\n{message}', #includes username so i know who sent it
+            from_email='noreply@tastebuds.com',
+            recipient_list=['chenylle.geronimo@gmail.com'],
+        )
+        return Response({'message': 'Message sent successfully'})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
