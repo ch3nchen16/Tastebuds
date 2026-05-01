@@ -150,3 +150,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'users.User'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://tastebuds-production-674f.up.railway.app',
+    'https://tastebuds-gray.vercel.app',
+]
