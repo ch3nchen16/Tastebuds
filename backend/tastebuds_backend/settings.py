@@ -77,7 +77,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://tastebuds-gray.vercel.app",
+    "http://localhost:8100",
+    "http://127.0.0.1:8100",
+]
 
 ROOT_URLCONF = 'tastebuds_backend.urls'
 
