@@ -42,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-1c39irv-79@^juv#5m(_r2$4jm%%xcsxe983(v*d*sy^r72sro')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.34', 'tastebuds-production-674f.up.railway.app'] #added local host and laptop ip address so we can access the backend from the frontend (which is running on a different port) and also from the mobile app (which is running on the phone and needs to access the backend running on the laptop)
 

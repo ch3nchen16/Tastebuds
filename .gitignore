@@ -10,8 +10,5 @@ frontend/tastebuds/node_modules/
 # Database
 backend/db.sqlite3
 
-# Firebase (hide api key)
-frontend/tastebuds/src/app/services/firebase.config.ts
-
 # Firebase credentials (hide service account key)
 backend/firebase_credentials.json
