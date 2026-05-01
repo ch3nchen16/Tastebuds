@@ -93,14 +93,14 @@
         fill="outline"
         placeholder="Write a caption (optional)"
         [(ngModel)]="caption"
-        [autocapitalize]="sentences"
+        (ionBlur)="caption = capitaliseFirst(caption)"
       ></ion-input>
       <div class="section-title">Cuisine Type</div>
       <ion-input
         fill="outline"
         placeholder="Cuisine type e.g Italian (optional)"
         [(ngModel)]="cuisineType"
-        [autocapitalize]="sentences"
+        (ionBlur)="cuisineType = capitaliseFirst(cuisineType)"
       ></ion-input>
     </div>
 
@@ -199,7 +199,7 @@
             fill="outline"
             placeholder="Ingredient *"
             [(ngModel)]="ingredient.name"
-            [autocapitalize]="sentences"
+            (ionBlur)="ingredient.name = capitaliseFirst(ingredient.name)"
           ></ion-input>
           <ion-input
             fill="outline"
@@ -234,7 +234,7 @@
             fill="outline"
             [placeholder]="'Step ' + (i + 1) + '...'"
             [(ngModel)]="instructions[i]"
-            [autocapitalize]="sentences"
+            (ionBlur)="instructions[i] = capitaliseFirst(instructions[i])"
           ></ion-input>
 
           <!-- UP/DOWN ARROWS -->
@@ -272,7 +272,7 @@
           fill="outline"
           placeholder="Restaurant Name (required)"
           [(ngModel)]="restaurantName"
-          [autocapitalize]="sentences"
+          (ionBlur)="restaurantName = capitaliseFirst(restaurantName)"
         ></ion-input>
 
         <!-- Location -->
@@ -280,7 +280,7 @@
           fill="outline"
           placeholder="Location e.g Dublin, Ireland (required)"
           [(ngModel)]="location"
-          [autocapitalize]="sentences"
+          (ionBlur)="location = capitaliseFirst(location)"
         ></ion-input>
 
         <!-- Price range -->
@@ -330,7 +330,7 @@
             fill="outline"
             placeholder="Add custom dining type"
             [(ngModel)]="customDiningType"
-            [autocapitalize]="sentences"
+            autocapitalize="sentences"
           ></ion-input>
           <div class="add-btn" (click)="addCustomDiningType()">
             <ion-icon name="add-outline"></ion-icon>
