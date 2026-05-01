@@ -71,3 +71,62 @@ ion-toolbar {
 .alert-delete-btn {
     color: #E8475F !important;
 }
+
+/* CONTACT FORM */
+.contact-form {
+    padding: 16px;
+
+    @media (min-width: 768px) { 
+        padding: 24px; 
+    }
+    @media (min-width: 1024px) { 
+        padding: 32px; 
+    }
+
+    .contact-intro {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 12px;
+
+        @media (min-width: 768px) { 
+            font-size: 15px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 18px; 
+        }
+    }
+
+    ion-textarea {
+        margin-bottom: 12px;
+    }
+
+    ion-button {
+        margin-top: 8px;
+    }
+
+    .error-message {
+        color: #E8475F;
+        font-size: 13px;
+        margin-bottom: 8px;
+
+        @media (min-width: 768px) { 
+            font-size: 15px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 17px; 
+        }
+    }
+
+    .success-message {
+        color: #2dd36f;
+        font-size: 13px;
+        margin-bottom: 8px;
+
+        @media (min-width: 768px) { 
+            font-size: 15px; 
+        }
+        @media (min-width: 1024px) { 
+            font-size: 17px; 
+        }
+    }
+}
