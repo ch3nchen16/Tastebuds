@@ -426,7 +426,7 @@ ion-toolbar {
 
 .instruction-row {
   display: grid;
-  grid-template-columns: auto 1fr auto; 
+  grid-template-columns: auto 1fr auto auto;  //now 4 columns so i added another auto
   gap: 8px;
   align-items: center;
 

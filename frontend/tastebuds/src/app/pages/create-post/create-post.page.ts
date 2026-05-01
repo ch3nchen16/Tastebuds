@@ -5,7 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { imageOutline, closeOutline, addOutline } from 'ionicons/icons';
+import { imageOutline, closeOutline, addOutline, chevronUpOutline, chevronDownOutline } from 'ionicons/icons';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonSpinner, IonInput, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { CloudinaryService } from '../../services/cloudinary.service';
@@ -18,7 +18,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './create-post.page.html',
   styleUrls: ['./create-post.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSpinner, IonInput, IonButtons, IonButton, IonIcon, CommonModule, FormsModule, RouterModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSpinner, IonInput, IonButtons, IonButton, IonIcon, CommonModule, FormsModule, RouterModule, chevronUpOutline, chevronDownOutline]
 })
 export class CreatePostPage implements OnInit {
 
