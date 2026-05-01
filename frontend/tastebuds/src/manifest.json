@@ -1,0 +1,16 @@
+{
+    "name": "TasteBuds",
+    "short_name": "TasteBuds",
+    "description": "Trust Your Taste Buds",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#E8475F",
+    "icons": [
+        {
+            "src": "assets/icon/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
